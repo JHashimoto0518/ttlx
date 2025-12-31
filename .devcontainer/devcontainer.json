@@ -1,7 +1,7 @@
 {
-  "name": "claude-code-sdd-template",
+  "name": "ttlx",
   "image": "mcr.microsoft.com/devcontainers/base:bookworm",
-  "workspaceFolder": "/workspaces/claude-code-sdd-template",
+  "workspaceFolder": "/workspaces/ttlx",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {}
