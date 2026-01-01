@@ -23,17 +23,11 @@ profiles:
 route:
   - profile: bastion
     commands:
-      - echo "=== Connected to bastion ==="
       - hostname
-      - whoami
-      - pwd
 
   - profile: target
     commands:
-      - echo "=== Connected to target ==="
       - hostname
-      - whoami
-      - pwd
       - ls -la
 
 options:
