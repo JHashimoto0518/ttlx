@@ -1,0 +1,20 @@
+version: "1.0"
+
+profiles:
+  bastion:
+    host: bastion.example.com
+    user: user1
+    auth:
+      type: password
+      prompt: true
+
+  target:
+    host: 10.0.0.50
+    user: user2
+    auth:
+      type: password
+      prompt: true
+
+route:
+  - profile: bastion
+  - profile: target

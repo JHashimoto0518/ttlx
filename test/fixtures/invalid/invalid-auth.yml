@@ -1,0 +1,11 @@
+version: "1.0"
+
+profiles:
+  bastion:
+    host: bastion.example.com
+    user: user1
+    auth:
+      type: invalid_type
+
+route:
+  - profile: bastion

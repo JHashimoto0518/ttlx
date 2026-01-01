@@ -1,0 +1,10 @@
+profiles:
+  bastion:
+    host: bastion.example.com
+    user: user1
+    auth:
+      type: password
+      prompt: true
+
+route:
+  - profile: bastion

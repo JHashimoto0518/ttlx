@@ -1,0 +1,35 @@
+version: "1.0"
+
+profiles:
+  bastion:
+    host: bastion.example.com
+    port: 22
+    user: user1
+    auth:
+      type: password
+      env: BASTION_PASSWORD
+
+  target:
+    host: 10.0.0.50
+    port: 2222
+    user: user2
+    auth:
+      type: keyfile
+      path: ~/.ssh/id_rsa
+
+route:
+  - profile: bastion
+    commands:
+      - su - root
+      - cd /var/log
+
+  - profile: target
+    commands:
+      - ps aux
+      - df -h
+
+options:
+  timeout: 60
+  retry: 3
+  log: true
+  log_file: /tmp/ttlx.log
