@@ -2,6 +2,10 @@
 
 **Read this in other languages: 日本語 | [English](README.en.md)**
 
+> [!WARNING]
+> 本プロジェクトは開発中です。APIや機能は予告なく変更される可能性があります。
+> 本番環境での使用は推奨しません。
+
 [![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)](https://golang.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
