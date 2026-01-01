@@ -1,0 +1,40 @@
+version: "1.0"
+
+# テスト用設定ファイル
+# Docker Composeで起動したテストサーバー用
+
+profiles:
+  bastion:
+    host: localhost
+    port: 2222
+    user: testuser
+    auth:
+      type: password
+      value: "testpass123"  # テスト環境のため直接指定
+
+  target:
+    host: target  # bastionから見たtargetホスト名
+    port: 2222    # コンテナ内部のSSHポート
+    user: testuser
+    auth:
+      type: password
+      value: "testpass123"
+
+route:
+  - profile: bastion
+    commands:
+      - echo "=== Connected to bastion ==="
+      - hostname
+      - whoami
+      - pwd
+
+  - profile: target
+    commands:
+      - echo "=== Connected to target ==="
+      - hostname
+      - whoami
+      - pwd
+      - ls -la
+
+options:
+  timeout: 30

@@ -13,6 +13,9 @@ By participating in this project, you agree to maintain a respectful and inclusi
 - Go 1.21 or later
 - Git
 - golangci-lint (for code quality checks)
+- **Docker Desktop** (Windows/macOS) or **Docker Engine** (Linux)
+  - Required for running the test environment (SSH containers)
+  - Required for devcontainer development
 
 ### Setting Up Development Environment
 
@@ -38,6 +41,24 @@ go mod download
 ```bash
 go test ./...
 ```
+
+### Using Dev Container (Recommended)
+
+The repository includes a devcontainer configuration for consistent development environments.
+
+**Prerequisites:**
+- Docker Desktop (Windows/macOS) or Docker Engine (Linux)
+- Visual Studio Code with [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+
+**Setup:**
+1. Clone the repository
+2. Open in VS Code
+3. When prompted, click "Reopen in Container" (or run "Dev Containers: Reopen in Container" from command palette)
+4. The devcontainer will automatically set up Go, Docker CLI, and all dependencies
+
+**Notes:**
+- The devcontainer uses Docker-outside-of-Docker (DooD), meaning Docker containers run on the host while being controlled from inside the devcontainer
+- This allows the test environment (SSH containers) to be accessible from both the devcontainer and the host (e.g., Windows Tera Term)
 
 ## Development Workflow
 

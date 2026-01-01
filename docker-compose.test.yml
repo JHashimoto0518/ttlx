@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # 踏み台サーバー
+  bastion:
+    image: linuxserver/openssh-server:latest
+    container_name: ttlx-test-bastion
+    hostname: bastion
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Tokyo
+      - PASSWORD_ACCESS=true
+      - USER_NAME=testuser
+      - USER_PASSWORD=testpass123
+    ports:
+      - "2222:2222"
+    networks:
+      - test-network
+
+  # ターゲットサーバー
+  target:
+    image: linuxserver/openssh-server:latest
+    container_name: ttlx-test-target
+    hostname: target
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Tokyo
+      - PASSWORD_ACCESS=true
+      - USER_NAME=testuser
+      - USER_PASSWORD=testpass123
+    ports:
+      - "2223:2222"
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
