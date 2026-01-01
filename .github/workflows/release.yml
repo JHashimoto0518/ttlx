@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+
+    - name: Check out code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Get version
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+    - name: Build binaries
+      run: |
+        # Linux AMD64
+        GOOS=linux GOARCH=amd64 go build -o ttlx-linux-amd64 -ldflags="-s -w" cmd/ttlx/main.go
+
+        # Linux ARM64
+        GOOS=linux GOARCH=arm64 go build -o ttlx-linux-arm64 -ldflags="-s -w" cmd/ttlx/main.go
+
+        # macOS AMD64
+        GOOS=darwin GOARCH=amd64 go build -o ttlx-darwin-amd64 -ldflags="-s -w" cmd/ttlx/main.go
+
+        # macOS ARM64 (Apple Silicon)
+        GOOS=darwin GOARCH=arm64 go build -o ttlx-darwin-arm64 -ldflags="-s -w" cmd/ttlx/main.go
+
+        # Windows AMD64
+        GOOS=windows GOARCH=amd64 go build -o ttlx-windows-amd64.exe -ldflags="-s -w" cmd/ttlx/main.go
+
+    - name: Create checksums
+      run: |
+        sha256sum ttlx-* > checksums.txt
+
+    - name: Extract changelog
+      id: changelog
+      run: |
+        VERSION=${{ steps.get_version.outputs.VERSION }}
+        # Extract the changelog for this version
+        sed -n "/## \[${VERSION#v}\]/,/## \[/p" CHANGELOG.md | sed '$d' > release_notes.md
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: Release ${{ steps.get_version.outputs.VERSION }}
+        body_path: release_notes.md
+        files: |
+          ttlx-linux-amd64
+          ttlx-linux-arm64
+          ttlx-darwin-amd64
+          ttlx-darwin-arm64
+          ttlx-windows-amd64.exe
+          checksums.txt
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
