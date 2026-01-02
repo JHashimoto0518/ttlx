@@ -18,8 +18,14 @@ var buildCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		configPath := args[0]
-		outputPath, _ := cmd.Flags().GetString("output")
-		dryRun, _ := cmd.Flags().GetBool("dry-run")
+		outputPath, err := cmd.Flags().GetString("output")
+		if err != nil {
+			return fmt.Errorf("failed to get output flag: %w", err)
+		}
+		dryRun, err := cmd.Flags().GetBool("dry-run")
+		if err != nil {
+			return fmt.Errorf("failed to get dry-run flag: %w", err)
+		}
 
 		// 1. 設定読み込み
 		cfg, err := config.LoadConfig(configPath)
