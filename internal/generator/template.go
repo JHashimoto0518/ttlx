@@ -20,22 +20,22 @@ timeout = %d
 	connectTemplate = `; === Step %d: %s ===
 :CONNECT_%s
 connect '%s:%d /ssh /auth=%s /user=%s%s%s'
-if result <> 0 then
-    goto :ERROR_CONNECT_%s
+if result <> 2 then
+    goto ERROR_CONNECT_%s
 endif
-wait '$' timeout
+wait '$'
 if result = 0 then
-    goto :TIMEOUT_%s
+    goto TIMEOUT_%s
 endif
 
 `
 
 	// SSH コマンドテンプレート（2番目以降のステップ）
 	sshTemplate = `; === Step %d: %s ===
-sendln 'ssh %s@%s'
-wait 'password:' timeout
+sendln 'ssh %s@%s -p %d'
+wait 'password:'
 if result = 0 then
-    goto :TIMEOUT_%s
+    goto TIMEOUT_%s
 endif
 
 `
@@ -63,9 +63,9 @@ sendln '%s'
 	// コマンド実行テンプレート
 	commandTemplate = `; Command: %s
 sendln '%s'
-wait '$' timeout
+wait '$'
 if result = 0 then
-    goto :TIMEOUT_%s
+    goto TIMEOUT_%s
 endif
 
 `
@@ -80,14 +80,14 @@ end
 	// エラーハンドリングテンプレート（接続失敗）
 	errorConnectTemplate = `:ERROR_CONNECT_%s
 messagebox 'Failed to connect to %s' 'Error'
-goto :CLEANUP
+goto CLEANUP
 
 `
 
 	// エラーハンドリングテンプレート（タイムアウト）
 	errorTimeoutTemplate = `:TIMEOUT_%s
 messagebox 'Connection timeout: %s' 'Error'
-goto :CLEANUP
+goto CLEANUP
 
 `
 

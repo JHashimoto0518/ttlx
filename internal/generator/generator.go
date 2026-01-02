@@ -111,6 +111,7 @@ func generateSSH(stepNum int, profileName, upperProfileName string, profile *con
 		profileName,
 		profile.User,
 		profile.Host,
+		profile.Port,
 		upperProfileName,
 	)
 }
