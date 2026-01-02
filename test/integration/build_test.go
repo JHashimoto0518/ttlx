@@ -115,7 +115,7 @@ func TestBuild_EndToEnd(t *testing.T) {
 	require.NoError(t, err)
 
 	// 4. ファイル出力
-	err = os.WriteFile(outputPath, []byte(ttl), 0644)
+	err = os.WriteFile(outputPath, []byte(ttl), 0o644)
 	require.NoError(t, err)
 
 	// 5. ファイルが作成されたことを確認
