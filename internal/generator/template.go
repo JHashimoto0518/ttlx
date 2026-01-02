@@ -23,7 +23,7 @@ connect '%s:%d /ssh /auth=%s /user=%s%s%s'
 if result <> 2 then
     goto ERROR_CONNECT_%s
 endif
-wait '$'
+wait '%s'
 if result = 0 then
     goto TIMEOUT_%s
 endif
@@ -63,7 +63,7 @@ sendln '%s'
 	// コマンド実行テンプレート
 	commandTemplate = `; Command: %s
 sendln '%s'
-wait '$'
+wait '%s'
 if result = 0 then
     goto TIMEOUT_%s
 endif

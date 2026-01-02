@@ -2,6 +2,7 @@ profiles:
   bastion:
     host: bastion.example.com
     user: user1
+    prompt: "$ "
     auth:
       type: password
       prompt: true

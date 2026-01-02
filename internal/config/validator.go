@@ -26,8 +26,14 @@ func Validate(config *Config) error {
 		}
 	}
 
-	// 認証設定チェック
+	// プロファイル設定チェック
 	for name, profile := range config.Profiles {
+		// prompt必須チェック
+		if profile.Prompt == "" {
+			return fmt.Errorf("profile '%s': prompt is required", name)
+		}
+
+		// 認証設定チェック
 		if err := validateAuth(profile.Auth); err != nil {
 			return fmt.Errorf("invalid auth in profile '%s': %w", name, err)
 		}

@@ -69,14 +69,24 @@ func TestValidate_InvalidAuth(t *testing.T) {
 	assert.Contains(t, err.Error(), "invalid auth type")
 }
 
+func TestValidate_MissingPrompt(t *testing.T) {
+	cfg, err := LoadConfig("../../test/fixtures/invalid/missing-prompt.yml")
+	require.NoError(t, err)
+
+	err = Validate(cfg)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "prompt is required")
+}
+
 func TestValidate_MissingRoute(t *testing.T) {
 	cfg := &Config{
 		Version: "1.0",
 		Profiles: map[string]*Profile{
 			"test": {
-				Host: "example.com",
-				User: "user",
-				Auth: &Auth{Type: "password", Prompt: true},
+				Host:   "example.com",
+				User:   "user",
+				Prompt: "$ ",
+				Auth:   &Auth{Type: "password", Prompt: true},
 			},
 		},
 		Route: []*RouteStep{},

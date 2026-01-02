@@ -8,6 +8,7 @@ profiles:
     host: localhost
     port: 2222
     user: testuser
+    prompt: "~$ "
     auth:
       type: password
       value: "testpass123"  # テスト環境のため直接指定
@@ -16,6 +17,7 @@ profiles:
     host: target  # bastionから見たtargetホスト名
     port: 2222    # コンテナ内部のSSHポート
     user: testuser
+    prompt: "~$ "
     auth:
       type: password
       value: "testpass123"

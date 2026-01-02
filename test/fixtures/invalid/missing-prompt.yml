@@ -4,9 +4,9 @@ profiles:
   bastion:
     host: bastion.example.com
     user: user1
-    prompt: "$ "
     auth:
-      type: invalid_type
+      type: password
+      prompt: true
 
 route:
   - profile: bastion
