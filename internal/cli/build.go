@@ -48,7 +48,7 @@ var buildCmd = &cobra.Command{
 			outputPath = strings.TrimSuffix(configPath, filepath.Ext(configPath)) + ".ttl"
 		}
 
-		if err := os.WriteFile(outputPath, []byte(ttl), 0644); err != nil {
+		if err := os.WriteFile(outputPath, []byte(ttl), 0o644); err != nil {
 			return fmt.Errorf("failed to write output: %w", err)
 		}
 
