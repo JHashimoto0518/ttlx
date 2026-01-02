@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Include password in connect command `/passwd` option instead of separate `sendln` (#6)
+- Fix connect result check from `<> 0` to `<> 2` (2 = linked and connected) (#8)
+- Remove colon prefix from goto labels (`goto LABEL`, not `goto :LABEL`) (#8)
+- Remove invalid timeout argument from wait command (#8)
+- Add port option to SSH command (`ssh user@host -p port`) (#8)
+
 ## [1.0.0] - 2026-01-01
 
 ### Added
