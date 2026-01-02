@@ -29,8 +29,8 @@ func TestGenerate_Simple(t *testing.T) {
 	// パスワード認証の確認
 	assert.Contains(t, ttl, "passwordbox 'Enter password for bastion:' 'password'")
 
-	// 2番目のステップの確認
-	assert.Contains(t, ttl, "sendln 'ssh user2@10.0.0.50'")
+	// 2番目のステップの確認（ポート指定含む）
+	assert.Contains(t, ttl, "sendln 'ssh user2@10.0.0.50 -p 22'")
 	assert.Contains(t, ttl, "passwordbox 'Enter password for target:' 'password'")
 
 	// エラーハンドリングの確認
@@ -68,8 +68,8 @@ func TestGenerate_Full(t *testing.T) {
 	assert.Contains(t, ttl, "sendln 'su - root'")
 	assert.Contains(t, ttl, "sendln 'cd /var/log'")
 
-	// 2番目のステップ（公開鍵認証）の確認
-	assert.Contains(t, ttl, "sendln 'ssh user2@10.0.0.50'")
+	// 2番目のステップ（公開鍵認証）の確認（ポート指定含む）
+	assert.Contains(t, ttl, "sendln 'ssh user2@10.0.0.50 -p 2222'")
 	assert.Contains(t, ttl, "sendln 'ps aux'")
 	assert.Contains(t, ttl, "sendln 'df -h'")
 }
