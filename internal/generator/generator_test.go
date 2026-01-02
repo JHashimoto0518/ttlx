@@ -131,8 +131,10 @@ func TestGenerate_PasswordValue(t *testing.T) {
 	ttl, err := Generate(cfg, "test.yml")
 	require.NoError(t, err)
 
-	// 直接指定されたパスワードの確認
-	assert.Contains(t, ttl, "sendln 'secret123'")
+	// 直接指定されたパスワードの確認 - connect コマンドに含まれる
+	assert.Contains(t, ttl, "connect 'server.example.com:22 /ssh /auth=password /user=user /passwd=secret123'")
+	// 別途の sendln でパスワード送信がないことを確認
+	assert.NotContains(t, ttl, "sendln 'secret123'")
 }
 
 func TestGenerate_Components(t *testing.T) {

@@ -31,8 +31,8 @@ func Generate(cfg *config.Config, sourceFile string) (string, error) {
 			// 最初のステップ: connect コマンド
 			sb.WriteString(generateConnect(i+1, step.Profile, upperProfileName, profile))
 
-			// パスワード認証処理
-			if profile.Auth.Type == "password" {
+			// パスワード認証処理（connect コマンドに含まれていない場合のみ）
+			if profile.Auth.Type == "password" && profile.Auth.Value == "" {
 				sb.WriteString(generatePasswordAuth(step.Profile, profile.Auth))
 			}
 		} else {
@@ -79,8 +79,13 @@ func generateVariables(cfg *config.Config) string {
 func generateConnect(stepNum int, profileName, upperProfileName string, profile *config.Profile) string {
 	authType := profile.Auth.Type
 	keyfileOption := ""
+	passwordOption := ""
+
 	if authType == "keyfile" {
 		keyfileOption = fmt.Sprintf(" /keyfile=%s", profile.Auth.Path)
+	} else if authType == "password" && profile.Auth.Value != "" {
+		// パスワードが直接指定されている場合は connect コマンドに含める
+		passwordOption = fmt.Sprintf(" /passwd=%s", profile.Auth.Value)
 	}
 
 	return fmt.Sprintf(
@@ -93,6 +98,7 @@ func generateConnect(stepNum int, profileName, upperProfileName string, profile 
 		authType,
 		profile.User,
 		keyfileOption,
+		passwordOption,
 		upperProfileName,
 		upperProfileName,
 	)

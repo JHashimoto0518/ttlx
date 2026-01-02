@@ -19,7 +19,7 @@ timeout = %d
 	// 接続テンプレート（最初のステップ）
 	connectTemplate = `; === Step %d: %s ===
 :CONNECT_%s
-connect '%s:%d /ssh /auth=%s /user=%s%s'
+connect '%s:%d /ssh /auth=%s /user=%s%s%s'
 if result <> 0 then
     goto :ERROR_CONNECT_%s
 endif
