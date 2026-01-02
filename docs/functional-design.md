@@ -289,33 +289,33 @@ retry_count = 3
 ; === ステップ1: bastion ===
 :CONNECT_BASTION
 connect 'bastion.example.com:22 /ssh /auth=password /user=user1'
-if result <> 0 then
-    goto :ERROR_CONNECT_BASTION
+if result <> 2 then
+    goto ERROR_CONNECT_BASTION
 endif
-wait '$' timeout
+wait '$'
 if result = 0 then
-    goto :TIMEOUT_BASTION
+    goto TIMEOUT_BASTION
 endif
 
 ; === ステップ1: コマンド実行 ===
 sendln 'su - root'
-wait '#' timeout
+wait '#'
 
 ; === ステップ2: target ===
-sendln 'ssh user2@10.0.0.50'
-wait 'password:' timeout
+sendln 'ssh user2@10.0.0.50 -p 22'
+wait 'password:'
 if result = 0 then
-    goto :TIMEOUT_TARGET
+    goto TIMEOUT_TARGET
 endif
 ; ... パスワード入力処理
 
-wait '$' timeout
+wait '$'
 
 ; === ステップ2: コマンド実行 ===
 sendln 'ls -la'
-wait '$' timeout
+wait '$'
 sendln 'pwd'
-wait '$' timeout
+wait '$'
 
 ; === 正常終了 ===
 :SUCCESS
@@ -325,15 +325,15 @@ end
 ; === エラーハンドリング ===
 :ERROR_CONNECT_BASTION
 messagebox 'Bastion接続エラー' 'エラー'
-goto :CLEANUP
+goto CLEANUP
 
 :TIMEOUT_BASTION
 messagebox 'Bastion接続タイムアウト' 'エラー'
-goto :CLEANUP
+goto CLEANUP
 
 :TIMEOUT_TARGET
 messagebox 'Target接続タイムアウト' 'エラー'
-goto :CLEANUP
+goto CLEANUP
 
 :CLEANUP
 closett
