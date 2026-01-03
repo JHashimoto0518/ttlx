@@ -106,6 +106,31 @@ func TestValidate_MissingPasswordPrompt(t *testing.T) {
 	assert.Contains(t, err.Error(), "password_prompt is required for password auth in route step 2")
 }
 
+func TestValidate_PasswordPromptInFirstStep(t *testing.T) {
+	// password_prompt in 1st step should be allowed but ignored
+	cfg := &Config{
+		Version: "1.0",
+		Profiles: map[string]*Profile{
+			"bastion": {
+				Host:         "bastion.example.com",
+				User:         "user1",
+				PromptMarker: "$ ",
+				Auth: &Auth{
+					Type:           "password",
+					Prompt:         true,
+					PasswordPrompt: "password:", // Allowed in 1st step (ignored)
+				},
+			},
+		},
+		Route: []*RouteStep{
+			{Profile: "bastion"},
+		},
+	}
+
+	err := Validate(cfg)
+	assert.NoError(t, err, "password_prompt should be allowed in 1st step profile")
+}
+
 func TestValidateAuth_Password(t *testing.T) {
 	tests := []struct {
 		name    string
