@@ -28,9 +28,9 @@ func Validate(config *Config) error {
 
 	// プロファイル設定チェック
 	for name, profile := range config.Profiles {
-		// prompt必須チェック
-		if profile.Prompt == "" {
-			return fmt.Errorf("profile '%s': prompt is required", name)
+		// prompt_marker必須チェック
+		if profile.PromptMarker == "" {
+			return fmt.Errorf("profile '%s': prompt_marker is required", name)
 		}
 
 		// 認証設定チェック

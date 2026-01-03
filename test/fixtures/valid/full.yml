@@ -5,7 +5,7 @@ profiles:
     host: bastion.example.com
     port: 22
     user: user1
-    prompt: "# "
+    prompt_marker: "# "
     auth:
       type: password
       env: BASTION_PASSWORD
@@ -14,7 +14,7 @@ profiles:
     host: 10.0.0.50
     port: 2222
     user: user2
-    prompt: "$ "
+    prompt_marker: "$ "
     auth:
       type: keyfile
       path: ~/.ssh/id_rsa

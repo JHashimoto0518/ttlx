@@ -59,6 +59,7 @@ profiles:
     host: string           # ホスト名またはIPアドレス（必須）
     port: integer          # ポート番号（任意、デフォルト: 22）
     user: string           # ユーザー名（必須）
+    prompt_marker: string  # プロンプト識別文字列（必須）例: "$ ", "# "
     auth:                  # 認証設定（必須）
       type: "password" | "keyfile"  # 認証タイプ
       # パスワード認証の場合
@@ -126,6 +127,7 @@ erDiagram
         string host
         int port
         string user
+        string prompt_marker
         auth auth
     }
 
@@ -254,6 +256,7 @@ graph TB
 - `profiles` に少なくとも1つのプロファイルが定義されている
 - `route` に少なくとも1つのステップが定義されている
 - `route` の各ステップで指定された `profile` が `profiles` に存在する
+- 各プロファイルに `prompt_marker` が設定されている
 - 認証設定が正しい（`password` の場合は `value` | `env` | `prompt` のいずれか）
 - ホスト名、ポート番号が妥当な形式
 - `commands` が指定されている場合、配列形式である

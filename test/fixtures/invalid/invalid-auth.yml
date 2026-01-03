@@ -4,7 +4,7 @@ profiles:
   bastion:
     host: bastion.example.com
     user: user1
-    prompt: "$ "
+    prompt_marker: "$ "
     auth:
       type: invalid_type
 
