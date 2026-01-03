@@ -47,7 +47,7 @@ func Generate(cfg *config.Config, sourceFile string) (string, error) {
 
 		// コマンド実行
 		if len(step.Commands) > 0 {
-			sb.WriteString(generateCommands(step.Commands, upperProfileName))
+			sb.WriteString(generateCommands(step.Commands, profile.PromptMarker, upperProfileName))
 		}
 
 		// エラーラベルを記録
@@ -100,6 +100,7 @@ func generateConnect(stepNum int, profileName, upperProfileName string, profile 
 		keyfileOption,
 		passwordOption,
 		upperProfileName,
+		profile.PromptMarker,
 		upperProfileName,
 	)
 }
@@ -129,10 +130,10 @@ func generatePasswordAuth(profileName string, auth *config.Auth) string {
 	return ""
 }
 
-func generateCommands(commands []string, upperProfileName string) string {
+func generateCommands(commands []string, prompt, upperProfileName string) string {
 	var sb strings.Builder
 	for _, cmd := range commands {
-		sb.WriteString(fmt.Sprintf(commandTemplate, cmd, cmd, upperProfileName))
+		sb.WriteString(fmt.Sprintf(commandTemplate, cmd, cmd, prompt, upperProfileName))
 	}
 	return sb.String()
 }

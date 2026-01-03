@@ -79,9 +79,10 @@ func TestGenerate_WithKeyfile(t *testing.T) {
 		Version: "1.0",
 		Profiles: map[string]*config.Profile{
 			"server": {
-				Host: "server.example.com",
-				Port: 22,
-				User: "user",
+				Host:         "server.example.com",
+				Port:         22,
+				User:         "user",
+				PromptMarker: "$ ",
 				Auth: &config.Auth{
 					Type: "keyfile",
 					Path: "~/.ssh/id_rsa",
@@ -111,9 +112,10 @@ func TestGenerate_PasswordValue(t *testing.T) {
 		Version: "1.0",
 		Profiles: map[string]*config.Profile{
 			"server": {
-				Host: "server.example.com",
-				Port: 22,
-				User: "user",
+				Host:         "server.example.com",
+				Port:         22,
+				User:         "user",
+				PromptMarker: "$ ",
 				Auth: &config.Auth{
 					Type:  "password",
 					Value: "secret123",

@@ -10,10 +10,11 @@ type Config struct {
 
 // Profile represents an SSH connection profile.
 type Profile struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port,omitempty"` // デフォルト: 22
-	User string `yaml:"user"`
-	Auth *Auth  `yaml:"auth"`
+	Host         string `yaml:"host"`
+	Port         int    `yaml:"port,omitempty"`          // デフォルト: 22
+	User         string `yaml:"user"`
+	PromptMarker string `yaml:"prompt_marker"`           // プロンプトを識別する文字列（必須）例: "$ ", "# "
+	Auth         *Auth  `yaml:"auth"`
 }
 
 // Auth represents authentication settings.

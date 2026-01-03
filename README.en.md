@@ -61,6 +61,7 @@ profiles:
   bastion:
     host: bastion.example.com
     user: user1
+    prompt_marker: "$ "
     auth:
       type: password
       prompt: true
@@ -68,6 +69,7 @@ profiles:
   target:
     host: 10.0.0.50
     user: user2
+    prompt_marker: "$ "
     auth:
       type: password
       env: TARGET_PASSWORD
@@ -109,6 +111,7 @@ profiles:
     host: hostname_or_ip    # Required
     port: 22                # Optional, default: 22
     user: username          # Required
+    prompt_marker: "$ "     # Required, prompt detection string
     auth:                   # Required
       type: password|keyfile
       # ... auth specific settings

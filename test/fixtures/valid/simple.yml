@@ -4,6 +4,7 @@ profiles:
   bastion:
     host: bastion.example.com
     user: user1
+    prompt_marker: "$ "
     auth:
       type: password
       prompt: true
@@ -11,6 +12,7 @@ profiles:
   target:
     host: 10.0.0.50
     user: user2
+    prompt_marker: "$ "
     auth:
       type: password
       prompt: true

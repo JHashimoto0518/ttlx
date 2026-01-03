@@ -17,19 +17,21 @@ func TestConfig_SetDefaults(t *testing.T) {
 			config: &Config{
 				Profiles: map[string]*Profile{
 					"test": {
-						Host: "example.com",
-						User: "user",
-						Auth: &Auth{Type: "password", Prompt: true},
+						Host:         "example.com",
+						User:         "user",
+						PromptMarker: "$ ",
+						Auth:         &Auth{Type: "password", Prompt: true},
 					},
 				},
 			},
 			expected: &Config{
 				Profiles: map[string]*Profile{
 					"test": {
-						Host: "example.com",
-						Port: 22,
-						User: "user",
-						Auth: &Auth{Type: "password", Prompt: true},
+						Host:         "example.com",
+						Port:         22,
+						User:         "user",
+						PromptMarker: "$ ",
+						Auth:         &Auth{Type: "password", Prompt: true},
 					},
 				},
 				Options: &Options{
@@ -42,20 +44,22 @@ func TestConfig_SetDefaults(t *testing.T) {
 			config: &Config{
 				Profiles: map[string]*Profile{
 					"test": {
-						Host: "example.com",
-						Port: 2222,
-						User: "user",
-						Auth: &Auth{Type: "password", Prompt: true},
+						Host:         "example.com",
+						Port:         2222,
+						User:         "user",
+						PromptMarker: "$ ",
+						Auth:         &Auth{Type: "password", Prompt: true},
 					},
 				},
 			},
 			expected: &Config{
 				Profiles: map[string]*Profile{
 					"test": {
-						Host: "example.com",
-						Port: 2222,
-						User: "user",
-						Auth: &Auth{Type: "password", Prompt: true},
+						Host:         "example.com",
+						Port:         2222,
+						User:         "user",
+						PromptMarker: "$ ",
+						Auth:         &Auth{Type: "password", Prompt: true},
 					},
 				},
 				Options: &Options{
@@ -68,19 +72,21 @@ func TestConfig_SetDefaults(t *testing.T) {
 			config: &Config{
 				Profiles: map[string]*Profile{
 					"test": {
-						Host: "example.com",
-						User: "user",
-						Auth: &Auth{Type: "password", Prompt: true},
+						Host:         "example.com",
+						User:         "user",
+						PromptMarker: "$ ",
+						Auth:         &Auth{Type: "password", Prompt: true},
 					},
 				},
 			},
 			expected: &Config{
 				Profiles: map[string]*Profile{
 					"test": {
-						Host: "example.com",
-						Port: 22,
-						User: "user",
-						Auth: &Auth{Type: "password", Prompt: true},
+						Host:         "example.com",
+						Port:         22,
+						User:         "user",
+						PromptMarker: "$ ",
+						Auth:         &Auth{Type: "password", Prompt: true},
 					},
 				},
 				Options: &Options{
@@ -93,9 +99,10 @@ func TestConfig_SetDefaults(t *testing.T) {
 			config: &Config{
 				Profiles: map[string]*Profile{
 					"test": {
-						Host: "example.com",
-						User: "user",
-						Auth: &Auth{Type: "password", Prompt: true},
+						Host:         "example.com",
+						User:         "user",
+						PromptMarker: "$ ",
+						Auth:         &Auth{Type: "password", Prompt: true},
 					},
 				},
 				Options: &Options{
@@ -105,10 +112,11 @@ func TestConfig_SetDefaults(t *testing.T) {
 			expected: &Config{
 				Profiles: map[string]*Profile{
 					"test": {
-						Host: "example.com",
-						Port: 22,
-						User: "user",
-						Auth: &Auth{Type: "password", Prompt: true},
+						Host:         "example.com",
+						Port:         22,
+						User:         "user",
+						PromptMarker: "$ ",
+						Auth:         &Auth{Type: "password", Prompt: true},
 					},
 				},
 				Options: &Options{

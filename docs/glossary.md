@@ -136,8 +136,27 @@ profiles:
   bastion:
     host: bastion.example.com
     user: user1
+    prompt_marker: "$ "
     auth:
       type: password
+```
+
+---
+
+#### プロンプトマーカー（Prompt Marker）
+**日本語**: プロンプトマーカー
+
+**英語**: Prompt Marker
+
+**定義**: プロンプトを識別するための文字列。TTL の `wait` コマンドで使用され、コマンド実行後にプロンプトが表示されたことを検出するために使用される。
+
+**コード上の表記**: `PromptMarker` (フィールド), `prompt_marker` (YAML)
+
+**例**:
+```yaml
+prompt_marker: "$ "   # 一般ユーザーのプロンプト
+prompt_marker: "# "   # rootのプロンプト
+prompt_marker: "mysql> "  # MySQLのプロンプト
 ```
 
 ---
@@ -357,6 +376,7 @@ ttlx init
 - `Host`: ホスト名
 - `Port`: ポート番号
 - `User`: ユーザー名
+- `PromptMarker`: プロンプト識別文字列
 - `Auth`: 認証設定
 
 **パッケージ**: `internal/config`
@@ -397,6 +417,7 @@ ttlx init
 | 英語 | 日本語 | コード表記 | 備考 |
 |------|--------|-----------|------|
 | Profile | プロファイル | `Profile` | 接続設定 |
+| Prompt Marker | プロンプトマーカー | `PromptMarker` | プロンプト識別文字列 |
 | Route | ルート、経路 | `Route` | 接続順序 |
 | Route Step | ルートステップ | `RouteStep` | ルートの各段階 |
 | Bastion Host | 踏み台サーバー | `bastion` | 中継サーバー |
