@@ -75,15 +75,16 @@ profiles:
       env: TARGET_PASSWORD
       password_prompt: "password:"  # Required for 2nd+ steps
 
-route:
-  - profile: bastion
-    commands:
-      - echo "Connected to bastion"
+routes:
+  simple-connection:
+    - profile: bastion
+      commands:
+        - echo "Connected to bastion"
 
-  - profile: target
-    commands:
-      - ps aux
-      - df -h
+    - profile: target
+      commands:
+        - ps aux
+        - df -h
 ```
 
 ### 2. Generate TTL script
@@ -146,15 +147,16 @@ auth:
 Define the sequence of SSH connections:
 
 ```yaml
-route:
-  - profile: bastion       # First hop
-    commands:              # Optional commands to run
-      - su - root
-      - cd /var/log
+routes:
+  multi-hop-connection:
+    - profile: bastion       # First hop
+      commands:              # Optional commands to run
+        - su - root
+        - cd /var/log
 
-  - profile: target        # Second hop
-    commands:
-      - ps aux
+    - profile: target        # Second hop
+      commands:
+        - ps aux
 ```
 
 ### Global Options
@@ -178,8 +180,19 @@ Generate a TTL script from YAML configuration:
 ttlx build <config.yml> [flags]
 
 Flags:
-  -o, --output string   Output file path (default: <config>.ttl)
+  -o, --output string   Output directory path (default: current directory)
       --dry-run         Print to stdout instead of file
+
+Example:
+$ ttlx build config.yml
+Generated TTL files:
+  - config.ttl
+  - config_simple-connection.ttl
+
+$ ttlx build config.yml -o output/
+Generated TTL files in output/:
+  - config.ttl
+  - config_simple-connection.ttl
 ```
 
 ### validate

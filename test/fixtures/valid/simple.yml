@@ -18,6 +18,7 @@ profiles:
       prompt: true
       password_prompt: "password:"  # 2段目以降で必須
 
-route:
-  - profile: bastion
-  - profile: target
+routes:
+  simple-connection:
+    - profile: bastion
+    - profile: target

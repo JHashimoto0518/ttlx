@@ -39,8 +39,8 @@ ssh -p 2223 testuser@localhost
 ### 3. Generate TTL Script
 
 ```bash
-# Generate test TTL
-./ttlx build test/test-config.yml -o test/test-connection.ttl
+# Generate test TTL (specify directory path with -o)
+./ttlx build test/test-config.yml -o test/
 
 # Verify generated content
 cat test/test-connection.ttl
@@ -142,7 +142,7 @@ ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -p 2223 testuser@localhost "
 
 # 4. Generate TTL
 echo "📝 Generating TTL script..."
-./ttlx build test/test-config.yml -o test/test-connection.ttl
+./ttlx build test/test-config.yml -o test/
 
 echo "✅ Setup complete!"
 echo ""

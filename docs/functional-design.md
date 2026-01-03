@@ -45,6 +45,30 @@ graph TB
 
 ## データモデル定義
 
+### ルート（routes）の設計思想
+
+**ルート** は、複数のプロファイルを組み合わせた接続シーケンスを定義します。
+
+- **routes**: キーがルート名、値が **ルートステップの配列** であるマップ構造
+- **ルートステップ**: 各ステップは1つのプロファイルと、それに続くコマンドを含む
+- **複数ルート対応**: 異なる接続シーケンスを複数定義可能（例: `main`、`backup`、`debug`）
+
+例：
+```yaml
+routes:
+  main:                    # ルート名: main
+    - profile: bastion    # ステップ1: bastion に接続
+      commands:
+        - su - root       # ステップ1 のコマンド
+    - profile: prod-db    # ステップ2: prod-db に接続
+      commands:
+        - pwd            # ステップ2 のコマンド
+
+  backup:                  # ルート名: backup （異なるシーケンス）
+    - profile: bastion
+    - profile: backup-db
+```
+
 ### YAML設定ファイルのスキーマ
 
 #### Phase 1 (MVP) スキーマ
@@ -70,11 +94,12 @@ profiles:
       # 公開鍵認証の場合
       path: string         # 秘密鍵ファイルパス
 
-# 接続ルート（必須）
-route:
-  - profile: string        # プロファイル名（必須）
-    commands:              # この接続後に実行するコマンド（任意）
-      - string             # コマンド文字列
+# 接続ルート定義（必須）
+routes:
+  <route_name>:           # ルート名（キー）
+    - profile: string     # プロファイル名（必須）
+      commands:           # この接続後に実行するコマンド（任意）
+        - string          # コマンド文字列
 
 # オプション設定（任意）
 options:
@@ -108,12 +133,13 @@ profiles:
       on_auth_failed: "abort" | "prompt"
 
 # ルートステップ固有のオプション（Phase 2）
-route:
-  - profile: string
-    commands: [...]
-    options:             # このステップ固有のオプション
-      timeout: integer
-      wait_prompt: string  # コマンド実行後の待機プロンプト
+routes:
+  <route_name>:
+    - profile: string
+      commands: [...]
+      options:             # このステップ固有のオプション
+        timeout: integer
+        wait_prompt: string  # コマンド実行後の待機プロンプト
 ```
 
 ### データ構造図（ER図風）
@@ -121,7 +147,7 @@ route:
 ```mermaid
 erDiagram
     CONFIG ||--o{ PROFILE : contains
-    CONFIG ||--|| ROUTE : has
+    CONFIG ||--o{ ROUTES_DEFINITION : defines
     CONFIG ||--o| OPTIONS : has
 
     PROFILE {
@@ -142,7 +168,12 @@ erDiagram
         string path
     }
 
-    ROUTE ||--o{ ROUTE_STEP : contains
+    ROUTES_DEFINITION {
+        string route_name
+        array route_steps
+    }
+
+    ROUTES_DEFINITION ||--o{ ROUTE_STEP : contains
 
     ROUTE_STEP {
         string profile_name
@@ -170,8 +201,9 @@ erDiagram
   "config_snapshot": {
     "version": "1.0",
     "profiles": { ... },
-    "route": [ ... ],
-    "commands": [ ... ]
+    "routes": {
+      "route_name": [ ... ]
+    }
   }
 }
 ```
@@ -257,8 +289,9 @@ graph TB
 **バリデーションルール**:
 - `version` フィールドが存在する
 - `profiles` に少なくとも1つのプロファイルが定義されている
-- `route` に少なくとも1つのステップが定義されている
-- `route` の各ステップで指定された `profile` が `profiles` に存在する
+- `routes` に少なくとも1つのルートが定義されている
+- `routes` の各ルート内の各ステップで指定された `profile` が `profiles` に存在する
+- 2段目以降のステップに認証が必要な場合、`password_prompt` が設定されている
 - 各プロファイルに `prompt_marker` が設定されている
 - 認証設定が正しい（`password` の場合は `value` | `env` | `prompt` のいずれか）
 - ホスト名、ポート番号が妥当な形式
@@ -610,9 +643,10 @@ Commands: 2
 
 config.yml:
   [エラー] プロファイル 'target' が見つかりません (line 15)
-    route:
-      - bastion
-      - target  ← このプロファイルが未定義です
+    routes:
+      main:
+        - profile: bastion
+        - profile: target  ← このプロファイルが未定義です
 
   [警告] パスワードが平文で記述されています (line 8)
     推奨: 環境変数または実行時入力を使用してください

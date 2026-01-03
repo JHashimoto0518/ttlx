@@ -14,7 +14,7 @@ func TestLoadConfig_Success(t *testing.T) {
 		assert.NotNil(t, cfg)
 		assert.NotEmpty(t, cfg.Version)
 		assert.NotEmpty(t, cfg.Profiles)
-		assert.NotEmpty(t, cfg.Route)
+		assert.NotEmpty(t, cfg.Routes)
 
 		// デフォルト値が設定されていることを確認
 		assert.NotNil(t, cfg.Options)
@@ -32,7 +32,7 @@ func TestLoadConfig_Success(t *testing.T) {
 		assert.NotNil(t, cfg)
 		assert.NotEmpty(t, cfg.Version)
 		assert.NotEmpty(t, cfg.Profiles)
-		assert.NotEmpty(t, cfg.Route)
+		assert.NotEmpty(t, cfg.Routes)
 
 		// カスタム値が保持されていることを確認
 		assert.NotNil(t, cfg.Options)

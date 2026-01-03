@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -16,25 +17,44 @@ func Validate(config *Config) error {
 		return errors.New("at least one profile must be defined")
 	}
 
-	if len(config.Route) == 0 {
-		return errors.New("route must have at least one step")
+	// routesが定義されていない場合
+	if len(config.Routes) == 0 {
+		return errors.New("routes must have at least one route")
 	}
 
-	// プロファイル参照チェック
-	for i, step := range config.Route {
-		if _, ok := config.Profiles[step.Profile]; !ok {
-			return fmt.Errorf("profile '%s' not found (route step %d)", step.Profile, i)
+	// ルート名のバリデーション
+	for routeName, route := range config.Routes {
+		// ルート名が空
+		if routeName == "" {
+			return errors.New("route name cannot be empty")
 		}
-	}
 
-	// 2段目以降のルートステップでパスワード認証の場合、password_prompt必須
-	for i, step := range config.Route {
-		if i == 0 {
-			continue // 1段目はconnectコマンドを使用するためpassword_prompt不要
+		// ルート名が有効なファイル名か
+		if !isValidFileName(routeName) {
+			return fmt.Errorf("route name '%s' contains invalid characters. Use only alphanumeric, hyphens, and underscores", routeName)
 		}
-		profile := config.Profiles[step.Profile]
-		if profile.Auth.Type == "password" && profile.Auth.PasswordPrompt == "" {
-			return fmt.Errorf("profile '%s': password_prompt is required for password auth in route step %d", step.Profile, i+1)
+
+		// ルートが空
+		if len(route) == 0 {
+			return fmt.Errorf("route '%s' must have at least one step", routeName)
+		}
+
+		// プロファイル参照チェック
+		for i, step := range route {
+			if _, ok := config.Profiles[step.Profile]; !ok {
+				return fmt.Errorf("route '%s': profile '%s' not found (step %d)", routeName, step.Profile, i+1)
+			}
+		}
+
+		// 2段目以降のpassword_promptチェック
+		for i, step := range route {
+			if i == 0 {
+				continue // 1段目はconnectコマンドを使用するためpassword_prompt不要
+			}
+			profile := config.Profiles[step.Profile]
+			if profile.Auth.Type == "password" && profile.Auth.PasswordPrompt == "" {
+				return fmt.Errorf("route '%s': profile '%s': password_prompt is required for password auth in route step %d", routeName, step.Profile, i+1)
+			}
 		}
 	}
 
@@ -88,4 +108,11 @@ func validateAuth(auth *Auth) error {
 	}
 
 	return nil
+}
+
+// isValidFileName はファイル名として有効な文字列かチェック
+func isValidFileName(name string) bool {
+	// 英数字、ハイフン、アンダースコアのみ許可
+	matched, _ := regexp.MatchString(`^[a-zA-Z0-9_-]+$`, name)
+	return matched
 }

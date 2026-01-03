@@ -7,5 +7,6 @@ profiles:
       type: password
       prompt: true
 
-route:
-  - profile: bastion
+routes:
+  test-route:
+    - profile: bastion

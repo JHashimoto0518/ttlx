@@ -19,16 +19,17 @@ profiles:
       type: keyfile
       path: ~/.ssh/id_rsa
 
-route:
-  - profile: bastion
-    commands:
-      - su - root
-      - cd /var/log
+routes:
+  full-connection:
+    - profile: bastion
+      commands:
+        - su - root
+        - cd /var/log
 
-  - profile: target
-    commands:
-      - ps aux
-      - df -h
+    - profile: target
+      commands:
+        - ps aux
+        - df -h
 
 options:
   timeout: 60

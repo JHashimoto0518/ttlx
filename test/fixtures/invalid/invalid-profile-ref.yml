@@ -9,6 +9,7 @@ profiles:
       type: password
       prompt: true
 
-route:
-  - profile: bastion
-  - profile: nonexistent
+routes:
+  test-route:
+    - profile: bastion
+    - profile: nonexistent

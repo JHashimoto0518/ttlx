@@ -39,8 +39,8 @@ ssh -p 2223 testuser@localhost
 ### 3. TTLスクリプトの生成
 
 ```bash
-# テスト用TTLを生成
-./ttlx build test/test-config.yml -o test/test-connection.ttl
+# テスト用TTLを生成（-o でディレクトリパスを指定）
+./ttlx build test/test-config.yml -o test/
 
 # 生成内容を確認
 cat test/test-connection.ttl
@@ -142,7 +142,7 @@ ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -p 2223 testuser@localhost "
 
 # 4. TTL生成
 echo "📝 TTLスクリプトを生成中..."
-./ttlx build test/test-config.yml -o test/test-connection.ttl
+./ttlx build test/test-config.yml -o test/
 
 echo "✅ セットアップ完了！"
 echo ""
