@@ -9,6 +9,7 @@ profiles:
     auth:
       type: password
       env: BASTION_PASSWORD
+      password_prompt: "password:"
 
   target:
     host: 10.0.0.50

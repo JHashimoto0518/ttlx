@@ -31,6 +31,7 @@ func TestGenerate_Simple(t *testing.T) {
 
 	// 2番目のステップの確認（ポート指定含む）
 	assert.Contains(t, ttl, "sendln 'ssh user2@10.0.0.50 -p 22'")
+	assert.Contains(t, ttl, "wait 'password:'")
 	assert.Contains(t, ttl, "passwordbox 'Enter password for target:' 'password'")
 
 	// エラーハンドリングの確認
@@ -117,8 +118,9 @@ func TestGenerate_PasswordValue(t *testing.T) {
 				User:         "user",
 				PromptMarker: "$ ",
 				Auth: &config.Auth{
-					Type:  "password",
-					Value: "secret123",
+					Type:           "password",
+					Value:          "secret123",
+					PasswordPrompt: "password:",
 				},
 			},
 		},

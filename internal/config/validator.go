@@ -53,6 +53,10 @@ func validateAuth(auth *Auth) error {
 		if auth.Value == "" && auth.Env == "" && !auth.Prompt {
 			return errors.New("password auth requires 'value', 'env', or 'prompt'")
 		}
+		// password_prompt 必須チェック
+		if auth.PasswordPrompt == "" {
+			return errors.New("password auth requires 'password_prompt'")
+		}
 	case "keyfile":
 		if auth.Path == "" {
 			return errors.New("keyfile auth requires 'path'")

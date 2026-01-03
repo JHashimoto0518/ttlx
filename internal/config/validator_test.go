@@ -86,7 +86,7 @@ func TestValidate_MissingRoute(t *testing.T) {
 				Host:         "example.com",
 				User:         "user",
 				PromptMarker: "$ ",
-				Auth:         &Auth{Type: "password", Prompt: true},
+				Auth:         &Auth{Type: "password", Prompt: true, PasswordPrompt: "password:"},
 			},
 		},
 		Route: []*RouteStep{},
@@ -97,6 +97,15 @@ func TestValidate_MissingRoute(t *testing.T) {
 	assert.Contains(t, err.Error(), "route must have at least one step")
 }
 
+func TestValidate_MissingPasswordPrompt(t *testing.T) {
+	cfg, err := LoadConfig("../../test/fixtures/invalid/missing-password-prompt.yml")
+	require.NoError(t, err)
+
+	err = Validate(cfg)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "password auth requires 'password_prompt'")
+}
+
 func TestValidateAuth_Password(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -105,22 +114,27 @@ func TestValidateAuth_Password(t *testing.T) {
 	}{
 		{
 			name:    "password with value",
-			auth:    &Auth{Type: "password", Value: "secret"},
+			auth:    &Auth{Type: "password", Value: "secret", PasswordPrompt: "password:"},
 			wantErr: false,
 		},
 		{
 			name:    "password with env",
-			auth:    &Auth{Type: "password", Env: "PASSWORD_ENV"},
+			auth:    &Auth{Type: "password", Env: "PASSWORD_ENV", PasswordPrompt: "password:"},
 			wantErr: false,
 		},
 		{
 			name:    "password with prompt",
-			auth:    &Auth{Type: "password", Prompt: true},
+			auth:    &Auth{Type: "password", Prompt: true, PasswordPrompt: "password:"},
 			wantErr: false,
 		},
 		{
 			name:    "password without any source",
-			auth:    &Auth{Type: "password"},
+			auth:    &Auth{Type: "password", PasswordPrompt: "password:"},
+			wantErr: true,
+		},
+		{
+			name:    "password without password_prompt",
+			auth:    &Auth{Type: "password", Prompt: true},
 			wantErr: true,
 		},
 	}

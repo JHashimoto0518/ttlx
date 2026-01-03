@@ -65,6 +65,7 @@ profiles:
     auth:
       type: password
       prompt: true
+      password_prompt: "password:"
 
   target:
     host: 10.0.0.50
@@ -73,6 +74,7 @@ profiles:
     auth:
       type: password
       env: TARGET_PASSWORD
+      password_prompt: "password:"
 
 route:
   - profile: bastion
@@ -124,6 +126,7 @@ profiles:
 ```yaml
 auth:
   type: password
+  password_prompt: "password:"  # Password prompt string to wait for (required)
   # Choose one of the following:
   prompt: true              # Prompt for password at runtime
   env: ENV_VAR_NAME        # Read from environment variable

@@ -406,6 +406,7 @@ ttlx init
 - `Value`: パスワード（直接記述）
 - `Env`: 環境変数名
 - `Prompt`: 実行時入力フラグ
+- `PasswordPrompt`: パスワード入力待機文字列
 - `Path`: 秘密鍵ファイルパス
 
 **パッケージ**: `internal/config`
@@ -418,6 +419,7 @@ ttlx init
 |------|--------|-----------|------|
 | Profile | プロファイル | `Profile` | 接続設定 |
 | Prompt Marker | プロンプトマーカー | `PromptMarker` | プロンプト識別文字列 |
+| Password Prompt | パスワードプロンプト | `PasswordPrompt` | パスワード入力待機文字列 |
 | Route | ルート、経路 | `Route` | 接続順序 |
 | Route Step | ルートステップ | `RouteStep` | ルートの各段階 |
 | Bastion Host | 踏み台サーバー | `bastion` | 中継サーバー |
