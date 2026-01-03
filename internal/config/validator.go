@@ -42,7 +42,7 @@ func Validate(config *Config) error {
 		// プロファイル参照チェック
 		for i, step := range route {
 			if _, ok := config.Profiles[step.Profile]; !ok {
-				return fmt.Errorf("route '%s': profile '%s' not found (step %d)", routeName, step.Profile, i)
+				return fmt.Errorf("route '%s': profile '%s' not found (step %d)", routeName, step.Profile, i+1)
 			}
 		}
 

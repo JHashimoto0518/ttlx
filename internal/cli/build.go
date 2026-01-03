@@ -94,6 +94,6 @@ var buildCmd = &cobra.Command{
 }
 
 func init() {
-	buildCmd.Flags().StringP("output", "o", "", "Output file path")
+	buildCmd.Flags().StringP("output", "o", "", "Output directory path")
 	buildCmd.Flags().Bool("dry-run", false, "Print to stdout instead of file")
 }

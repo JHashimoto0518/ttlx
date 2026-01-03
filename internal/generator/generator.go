@@ -3,6 +3,7 @@ package generator
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -15,7 +16,15 @@ const version = "1.0.0"
 func GenerateAll(cfg *config.Config, sourceFile string) (map[string]string, error) {
 	result := make(map[string]string)
 
-	for routeName, route := range cfg.Routes {
+	// Sort route names for deterministic processing
+	routeNames := make([]string, 0, len(cfg.Routes))
+	for routeName := range cfg.Routes {
+		routeNames = append(routeNames, routeName)
+	}
+	sort.Strings(routeNames)
+
+	for _, routeName := range routeNames {
+		route := cfg.Routes[routeName]
 		ttl, err := generateRoute(cfg, routeName, route, sourceFile)
 		if err != nil {
 			return nil, fmt.Errorf("failed to generate TTL for route '%s': %w", routeName, err)

@@ -78,6 +78,28 @@ func TestValidate_MissingPromptMarker(t *testing.T) {
 	assert.Contains(t, err.Error(), "prompt_marker is required")
 }
 
+func TestValidate_EmptyRoutes(t *testing.T) {
+	cfg := &Config{
+		Version: "1.0",
+		Profiles: map[string]*Profile{
+			"test": {
+				Host:         "localhost",
+				User:         "user",
+				PromptMarker: "$ ",
+				Auth: &Auth{
+					Type:   "password",
+					Prompt: true,
+				},
+			},
+		},
+		Routes: map[string][]*RouteStep{},
+	}
+
+	err := Validate(cfg)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "routes must have at least one route")
+}
+
 func TestValidate_MissingRoute(t *testing.T) {
 	cfg := &Config{
 		Version: "1.0",
@@ -318,4 +340,47 @@ func TestValidateAuth_Nil(t *testing.T) {
 	err := validateAuth(nil)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "auth is required")
+}
+
+func TestIsValidFileName(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected bool
+	}{
+		// Valid names
+		{"simple name", "simple", true},
+		{"with hyphen", "multi-hop", true},
+		{"with underscore", "route_1", true},
+		{"mixed", "prod-db_v1", true},
+		{"alphanumeric", "route123", true},
+
+		// Invalid names
+		{"empty string", "", false},
+		{"with slash", "route/slash", false},
+		{"with backslash", "route\\slash", false},
+		{"path traversal", "../parent", false},
+		{"absolute path", "/etc/passwd", false},
+		{"with space", "route with spaces", false},
+		{"with at", "route@special", false},
+		{"with dot", "route.name", false},
+		{"with colon", "route:name", false},
+		{"with semicolon", "route;name", false},
+		{"with pipe", "route|name", false},
+		{"with ampersand", "route&name", false},
+		{"with asterisk", "route*name", false},
+		{"with question", "route?name", false},
+		{"with quote", "route'name", false},
+		{"with double quote", "route\"name", false},
+		{"with angle bracket", "route<name", false},
+		{"with angle bracket", "route>name", false},
+		{"multibyte", "ルート", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := isValidFileName(tt.input)
+			assert.Equal(t, tt.expected, result, "isValidFileName(%q) = %v, want %v", tt.input, result, tt.expected)
+		})
+	}
 }

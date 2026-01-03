@@ -94,7 +94,6 @@ func generateRoute(cfg *config.Config, routeName string, route []config.RouteSte
 
 **変更内容:**
 - `Route []RouteStep` → `Routes map[string][]RouteStep`
-- `DeprecatedRoute []RouteStep` を追加（旧仕様検出用）
 
 **影響範囲:**
 - `SetDefaults()`: Routesの各ルートに対してデフォルト設定を適用
@@ -405,7 +404,6 @@ routes:
 
 1. **既存のYAMLファイルはすべて動作しなくなる**
    - `route:` → `routes:` に変更必須
-   - 旧仕様使用時は分かりやすいエラーメッセージを表示
 
 2. **`-o`オプションの挙動変更**
    - 従来: 出力ファイル名
