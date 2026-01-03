@@ -61,6 +61,7 @@ profiles:
   bastion:
     host: bastion.example.com
     user: user1
+    prompt_marker: "$ "
     auth:
       type: password
       prompt: true
@@ -68,6 +69,7 @@ profiles:
   target:
     host: 10.0.0.50
     user: user2
+    prompt_marker: "$ "
     auth:
       type: password
       env: TARGET_PASSWORD
@@ -109,6 +111,7 @@ profiles:
     host: ホスト名またはIP    # 必須
     port: 22                  # オプション、デフォルト: 22
     user: ユーザー名           # 必須
+    prompt_marker: "$ "       # 必須、プロンプト識別文字列
     auth:                     # 必須
       type: password|keyfile
       # ... 認証方式固有の設定
