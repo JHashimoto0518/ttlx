@@ -73,6 +73,7 @@ profiles:
     auth:
       type: password
       env: TARGET_PASSWORD
+      password_prompt: "password:"  # Required for 2nd+ steps
 
 route:
   - profile: bastion
@@ -128,6 +129,8 @@ auth:
   prompt: true              # Prompt for password at runtime
   env: ENV_VAR_NAME        # Read from environment variable
   value: "password"        # Direct password (not recommended)
+  # Required for 2nd+ route steps:
+  password_prompt: "password:"  # Password prompt string to wait for
 ```
 
 #### Public Key Authentication

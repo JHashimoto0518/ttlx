@@ -33,7 +33,7 @@ endif
 	// SSH コマンドテンプレート（2番目以降のステップ）
 	sshTemplate = `; === Step %d: %s ===
 sendln 'ssh %s@%s -p %d'
-wait 'password:'
+wait '%s'
 if result = 0 then
     goto TIMEOUT_%s
 endif

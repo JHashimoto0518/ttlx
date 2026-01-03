@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // Validate validates the configuration.
@@ -26,6 +27,17 @@ func Validate(config *Config) error {
 		}
 	}
 
+	// 2段目以降のルートステップでパスワード認証の場合、password_prompt必須
+	for i, step := range config.Route {
+		if i == 0 {
+			continue // 1段目はconnectコマンドを使用するためpassword_prompt不要
+		}
+		profile := config.Profiles[step.Profile]
+		if profile.Auth.Type == "password" && profile.Auth.PasswordPrompt == "" {
+			return fmt.Errorf("profile '%s': password_prompt is required for password auth in route step %d", step.Profile, i+1)
+		}
+	}
+
 	// プロファイル設定チェック
 	for name, profile := range config.Profiles {
 		// prompt_marker必須チェック
@@ -36,6 +48,16 @@ func Validate(config *Config) error {
 		// 認証設定チェック
 		if err := validateAuth(profile.Auth); err != nil {
 			return fmt.Errorf("invalid auth in profile '%s': %w", name, err)
+		}
+
+		// keyfile認証でpassword_promptが設定されている場合はエラー
+		if profile.Auth.Type == "keyfile" && profile.Auth.PasswordPrompt != "" {
+			return fmt.Errorf("profile '%s': password_prompt should not be set for keyfile auth", name)
+		}
+
+		// password_promptにシングルクォートが含まれる場合はエラー（TTLインジェクション対策）
+		if profile.Auth.PasswordPrompt != "" && strings.Contains(profile.Auth.PasswordPrompt, "'") {
+			return fmt.Errorf("profile '%s': password_prompt cannot contain single quotes", name)
 		}
 	}
 

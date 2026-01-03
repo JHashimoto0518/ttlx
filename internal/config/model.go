@@ -19,11 +19,12 @@ type Profile struct {
 
 // Auth represents authentication settings.
 type Auth struct {
-	Type   string `yaml:"type"`             // "password" | "keyfile"
-	Value  string `yaml:"value,omitempty"`  // パスワード直接記述
-	Env    string `yaml:"env,omitempty"`    // 環境変数名
-	Prompt bool   `yaml:"prompt,omitempty"` // 実行時入力
-	Path   string `yaml:"path,omitempty"`   // 秘密鍵ファイルパス
+	Type           string `yaml:"type"`                      // "password" | "keyfile"
+	Value          string `yaml:"value,omitempty"`           // パスワード直接記述
+	Env            string `yaml:"env,omitempty"`             // 環境変数名
+	Prompt         bool   `yaml:"prompt,omitempty"`          // 実行時入力
+	PasswordPrompt string `yaml:"password_prompt,omitempty"` // パスワード入力待機文字列（2段目以降で必須）例: "password:"
+	Path           string `yaml:"path,omitempty"`            // 秘密鍵ファイルパス
 }
 
 // RouteStep represents a step in the connection route.

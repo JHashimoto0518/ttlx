@@ -73,6 +73,7 @@ profiles:
     auth:
       type: password
       env: TARGET_PASSWORD
+      password_prompt: "password:"  # 2段目以降で必須
 
 route:
   - profile: bastion
@@ -128,6 +129,8 @@ auth:
   prompt: true              # 実行時にパスワードを入力
   env: ENV_VAR_NAME        # 環境変数から読み込み
   value: "password"        # パスワードを直接記述（非推奨）
+  # 2段目以降のルートステップでは以下が必須:
+  password_prompt: "password:"  # パスワード入力待機文字列
 ```
 
 #### 公開鍵認証

@@ -21,6 +21,7 @@ profiles:
     auth:
       type: password
       value: "testpass123"
+      password_prompt: "password:"  # 2段目以降で必須
 
 route:
   - profile: bastion
