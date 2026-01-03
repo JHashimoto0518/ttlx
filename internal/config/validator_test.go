@@ -131,6 +131,104 @@ func TestValidate_PasswordPromptInFirstStep(t *testing.T) {
 	assert.NoError(t, err, "password_prompt should be allowed in 1st step profile")
 }
 
+func TestValidate_PasswordPromptOnKeyfileAuth(t *testing.T) {
+	// password_prompt on keyfile auth should be an error
+	cfg := &Config{
+		Version: "1.0",
+		Profiles: map[string]*Profile{
+			"server": {
+				Host:         "server.example.com",
+				User:         "user1",
+				PromptMarker: "$ ",
+				Auth: &Auth{
+					Type:           "keyfile",
+					Path:           "~/.ssh/id_rsa",
+					PasswordPrompt: "password:", // Should not be set for keyfile
+				},
+			},
+		},
+		Route: []*RouteStep{
+			{Profile: "server"},
+		},
+	}
+
+	err := Validate(cfg)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "password_prompt should not be set for keyfile auth")
+}
+
+func TestValidate_PasswordPromptWithSingleQuote(t *testing.T) {
+	// password_prompt with single quote should be an error (TTL injection prevention)
+	cfg := &Config{
+		Version: "1.0",
+		Profiles: map[string]*Profile{
+			"bastion": {
+				Host:         "bastion.example.com",
+				User:         "user1",
+				PromptMarker: "$ ",
+				Auth:         &Auth{Type: "password", Prompt: true},
+			},
+			"target": {
+				Host:         "target.example.com",
+				User:         "user2",
+				PromptMarker: "$ ",
+				Auth: &Auth{
+					Type:           "password",
+					Prompt:         true,
+					PasswordPrompt: "password':", // Single quote should be rejected
+				},
+			},
+		},
+		Route: []*RouteStep{
+			{Profile: "bastion"},
+			{Profile: "target"},
+		},
+	}
+
+	err := Validate(cfg)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "password_prompt cannot contain single quotes")
+}
+
+func TestValidate_MultiHopMixedAuth(t *testing.T) {
+	// Multi-hop route with mixed auth types: password -> keyfile -> password
+	cfg := &Config{
+		Version: "1.0",
+		Profiles: map[string]*Profile{
+			"bastion": {
+				Host:         "bastion.example.com",
+				User:         "user1",
+				PromptMarker: "$ ",
+				Auth:         &Auth{Type: "password", Prompt: true},
+			},
+			"jump": {
+				Host:         "jump.internal",
+				User:         "user2",
+				PromptMarker: "$ ",
+				Auth:         &Auth{Type: "keyfile", Path: "~/.ssh/id_rsa"},
+			},
+			"target": {
+				Host:         "target.internal",
+				User:         "user3",
+				PromptMarker: "$ ",
+				Auth: &Auth{
+					Type:           "password",
+					Prompt:         true,
+					PasswordPrompt: "password:",
+				},
+			},
+		},
+		Route: []*RouteStep{
+			{Profile: "bastion"}, // 1st step: password (no password_prompt needed)
+			{Profile: "jump"},    // 2nd step: keyfile (no password_prompt needed)
+			{Profile: "target"},  // 3rd step: password (password_prompt required)
+		},
+	}
+
+	err := Validate(cfg)
+	assert.NoError(t, err, "multi-hop with mixed auth types should be valid")
+}
+
 func TestValidateAuth_Password(t *testing.T) {
 	tests := []struct {
 		name    string

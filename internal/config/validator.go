@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // Validate validates the configuration.
@@ -47,6 +48,16 @@ func Validate(config *Config) error {
 		// 認証設定チェック
 		if err := validateAuth(profile.Auth); err != nil {
 			return fmt.Errorf("invalid auth in profile '%s': %w", name, err)
+		}
+
+		// keyfile認証でpassword_promptが設定されている場合はエラー
+		if profile.Auth.Type == "keyfile" && profile.Auth.PasswordPrompt != "" {
+			return fmt.Errorf("profile '%s': password_prompt should not be set for keyfile auth", name)
+		}
+
+		// password_promptにシングルクォートが含まれる場合はエラー（TTLインジェクション対策）
+		if profile.Auth.PasswordPrompt != "" && strings.Contains(profile.Auth.PasswordPrompt, "'") {
+			return fmt.Errorf("profile '%s': password_prompt cannot contain single quotes", name)
 		}
 	}
 
