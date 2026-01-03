@@ -12,7 +12,6 @@ profiles:
     auth:
       type: password
       value: "testpass123"  # テスト環境のため直接指定
-      password_prompt: "password:"
 
   target:
     host: target  # bastionから見たtargetホスト名
@@ -22,7 +21,7 @@ profiles:
     auth:
       type: password
       value: "testpass123"
-      password_prompt: "password:"
+      password_prompt: "password:"  # 2段目以降で必須
 
 route:
   - profile: bastion

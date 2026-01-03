@@ -118,9 +118,8 @@ func TestGenerate_PasswordValue(t *testing.T) {
 				User:         "user",
 				PromptMarker: "$ ",
 				Auth: &config.Auth{
-					Type:           "password",
-					Value:          "secret123",
-					PasswordPrompt: "password:",
+					Type:  "password",
+					Value: "secret123",
 				},
 			},
 		},

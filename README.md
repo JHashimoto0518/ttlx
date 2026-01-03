@@ -65,7 +65,6 @@ profiles:
     auth:
       type: password
       prompt: true
-      password_prompt: "password:"
 
   target:
     host: 10.0.0.50
@@ -74,7 +73,7 @@ profiles:
     auth:
       type: password
       env: TARGET_PASSWORD
-      password_prompt: "password:"
+      password_prompt: "password:"  # 2段目以降で必須
 
 route:
   - profile: bastion
@@ -126,11 +125,12 @@ profiles:
 ```yaml
 auth:
   type: password
-  password_prompt: "password:"  # パスワード入力待機文字列（必須）
   # 以下のいずれかを選択:
   prompt: true              # 実行時にパスワードを入力
   env: ENV_VAR_NAME        # 環境変数から読み込み
   value: "password"        # パスワードを直接記述（非推奨）
+  # 2段目以降のルートステップでは以下が必須:
+  password_prompt: "password:"  # パスワード入力待機文字列
 ```
 
 #### 公開鍵認証

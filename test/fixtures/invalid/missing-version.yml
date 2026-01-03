@@ -6,7 +6,6 @@ profiles:
     auth:
       type: password
       prompt: true
-      password_prompt: "password:"
 
 route:
   - profile: bastion

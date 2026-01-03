@@ -66,7 +66,7 @@ profiles:
       value: string        # パスワード直接記述（非推奨）
       env: string          # 環境変数名
       prompt: boolean      # 実行時入力
-      password_prompt: string  # パスワード入力待機文字列（必須）例: "password:"
+      password_prompt: string  # パスワード入力待機文字列（2段目以降で必須）例: "password:"
       # 公開鍵認証の場合
       path: string         # 秘密鍵ファイルパス
 

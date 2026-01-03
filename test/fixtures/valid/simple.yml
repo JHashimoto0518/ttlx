@@ -8,7 +8,6 @@ profiles:
     auth:
       type: password
       prompt: true
-      password_prompt: "password:"
 
   target:
     host: 10.0.0.50
@@ -17,7 +16,7 @@ profiles:
     auth:
       type: password
       prompt: true
-      password_prompt: "password:"
+      password_prompt: "password:"  # 2段目以降で必須
 
 route:
   - profile: bastion

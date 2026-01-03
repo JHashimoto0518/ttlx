@@ -86,7 +86,7 @@ func TestValidate_MissingRoute(t *testing.T) {
 				Host:         "example.com",
 				User:         "user",
 				PromptMarker: "$ ",
-				Auth:         &Auth{Type: "password", Prompt: true, PasswordPrompt: "password:"},
+				Auth:         &Auth{Type: "password", Prompt: true},
 			},
 		},
 		Route: []*RouteStep{},
@@ -103,7 +103,7 @@ func TestValidate_MissingPasswordPrompt(t *testing.T) {
 
 	err = Validate(cfg)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "password auth requires 'password_prompt'")
+	assert.Contains(t, err.Error(), "password_prompt is required for password auth in route step 2")
 }
 
 func TestValidateAuth_Password(t *testing.T) {
@@ -114,27 +114,22 @@ func TestValidateAuth_Password(t *testing.T) {
 	}{
 		{
 			name:    "password with value",
-			auth:    &Auth{Type: "password", Value: "secret", PasswordPrompt: "password:"},
+			auth:    &Auth{Type: "password", Value: "secret"},
 			wantErr: false,
 		},
 		{
 			name:    "password with env",
-			auth:    &Auth{Type: "password", Env: "PASSWORD_ENV", PasswordPrompt: "password:"},
+			auth:    &Auth{Type: "password", Env: "PASSWORD_ENV"},
 			wantErr: false,
 		},
 		{
 			name:    "password with prompt",
-			auth:    &Auth{Type: "password", Prompt: true, PasswordPrompt: "password:"},
+			auth:    &Auth{Type: "password", Prompt: true},
 			wantErr: false,
 		},
 		{
 			name:    "password without any source",
-			auth:    &Auth{Type: "password", PasswordPrompt: "password:"},
-			wantErr: true,
-		},
-		{
-			name:    "password without password_prompt",
-			auth:    &Auth{Type: "password", Prompt: true},
+			auth:    &Auth{Type: "password"},
 			wantErr: true,
 		},
 	}

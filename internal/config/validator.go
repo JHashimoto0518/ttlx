@@ -26,6 +26,17 @@ func Validate(config *Config) error {
 		}
 	}
 
+	// 2段目以降のルートステップでパスワード認証の場合、password_prompt必須
+	for i, step := range config.Route {
+		if i == 0 {
+			continue // 1段目はconnectコマンドを使用するためpassword_prompt不要
+		}
+		profile := config.Profiles[step.Profile]
+		if profile.Auth.Type == "password" && profile.Auth.PasswordPrompt == "" {
+			return fmt.Errorf("profile '%s': password_prompt is required for password auth in route step %d", step.Profile, i+1)
+		}
+	}
+
 	// プロファイル設定チェック
 	for name, profile := range config.Profiles {
 		// prompt_marker必須チェック
@@ -52,10 +63,6 @@ func validateAuth(auth *Auth) error {
 		// Value, Env, Prompt のいずれか1つが必要
 		if auth.Value == "" && auth.Env == "" && !auth.Prompt {
 			return errors.New("password auth requires 'value', 'env', or 'prompt'")
-		}
-		// password_prompt 必須チェック
-		if auth.PasswordPrompt == "" {
-			return errors.New("password auth requires 'password_prompt'")
 		}
 	case "keyfile":
 		if auth.Path == "" {
