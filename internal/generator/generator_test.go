@@ -1,12 +1,18 @@
 package generator
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/JHashimoto0518/ttlx/internal/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+// boolPtr returns a pointer to a bool value.
+func boolPtr(b bool) *bool {
+	return &b
+}
 
 func TestGenerate_Simple(t *testing.T) {
 	cfg, err := config.LoadConfig("../../test/fixtures/valid/simple.yml")
@@ -162,4 +168,122 @@ func TestGenerate_Components(t *testing.T) {
 		vars := generateVariables(cfg)
 		assert.Contains(t, vars, "timeout = 30")
 	})
+}
+
+func TestGenerate_AutoDisconnect(t *testing.T) {
+	tests := []struct {
+		name           string
+		autoDisconnect *bool
+		routeSteps     int
+		expectClosett  bool
+		expectExit     int // 期待される exit コマンドの数
+		expectEnd      bool
+	}{
+		{
+			name:           "auto_disconnect: true (1 step)",
+			autoDisconnect: boolPtr(true),
+			routeSteps:     1,
+			expectClosett:  true,
+			expectExit:     0,
+			expectEnd:      true,
+		},
+		{
+			name:           "auto_disconnect: true (2 steps)",
+			autoDisconnect: boolPtr(true),
+			routeSteps:     2,
+			expectClosett:  true,
+			expectExit:     1,
+			expectEnd:      true,
+		},
+		{
+			name:           "auto_disconnect: false",
+			autoDisconnect: boolPtr(false),
+			routeSteps:     2,
+			expectClosett:  false,
+			expectExit:     0,
+			expectEnd:      true,
+		},
+		{
+			name:           "auto_disconnect: not specified (default)",
+			autoDisconnect: nil,
+			routeSteps:     2,
+			expectClosett:  false,
+			expectExit:     0,
+			expectEnd:      true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// テストケースに応じた Config を構築
+			cfg := buildTestConfig(tt.autoDisconnect, tt.routeSteps)
+
+			// TTL生成
+			result, err := Generate(cfg, "test.yml")
+			require.NoError(t, err)
+
+				// closett の存在チェック（成功終了部分のみ）
+			// SUCCESS セクションを抽出
+			successIndex := strings.Index(result, ":SUCCESS")
+			errorIndex := strings.Index(result, ":ERROR")
+			successSection := ""
+			if successIndex != -1 && errorIndex != -1 {
+				successSection = result[successIndex:errorIndex]
+			}
+
+			if tt.expectClosett {
+				assert.Contains(t, successSection, "closett", "expected 'closett' in SUCCESS section")
+			} else {
+				assert.NotContains(t, successSection, "closett", "unexpected 'closett' in SUCCESS section")
+			}
+
+			// exit コマンドの数チェック
+			exitCount := strings.Count(result, "sendln 'exit'")
+			assert.Equal(t, tt.expectExit, exitCount, "expected %d 'exit' commands, got %d", tt.expectExit, exitCount)
+
+			// end の存在チェック
+			if tt.expectEnd {
+				assert.Contains(t, result, "end", "expected 'end' in generated TTL")
+			}
+		})
+	}
+}
+
+// buildTestConfig builds a test configuration.
+func buildTestConfig(autoDisconnect *bool, routeSteps int) *config.Config {
+	cfg := &config.Config{
+		Version:  "1.0",
+		Profiles: make(map[string]*config.Profile),
+		Route:    make([]*config.RouteStep, 0),
+		Options: &config.Options{
+			Timeout:        30,
+			AutoDisconnect: autoDisconnect,
+		},
+	}
+
+	// プロファイルとルートを動的に生成
+	for i := 0; i < routeSteps; i++ {
+		profileName := "server" + string(rune('a'+i))
+		cfg.Profiles[profileName] = &config.Profile{
+			Host:         "example.com",
+			Port:         22,
+			User:         "user",
+			PromptMarker: "$ ",
+			Auth: &config.Auth{
+				Type:   "password",
+				Prompt: true,
+			},
+		}
+
+		// 2段目以降はpassword_promptが必要
+		if i > 0 {
+			cfg.Profiles[profileName].Auth.PasswordPrompt = "password:"
+		}
+
+		cfg.Route = append(cfg.Route, &config.RouteStep{
+			Profile: profileName,
+		})
+	}
+
+	return cfg
 }

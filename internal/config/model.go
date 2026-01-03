@@ -35,10 +35,11 @@ type RouteStep struct {
 
 // Options represents global options.
 type Options struct {
-	Timeout int    `yaml:"timeout,omitempty"`
-	Retry   int    `yaml:"retry,omitempty"`
-	Log     bool   `yaml:"log,omitempty"`
-	LogFile string `yaml:"log_file,omitempty"`
+	Timeout        int    `yaml:"timeout,omitempty"`
+	Retry          int    `yaml:"retry,omitempty"`
+	Log            bool   `yaml:"log,omitempty"`
+	LogFile        string `yaml:"log_file,omitempty"`
+	AutoDisconnect *bool  `yaml:"auto_disconnect,omitempty"` // 最終ステップ完了後に自動切断するか（デフォルト: false）
 }
 
 // SetDefaults sets default values for the config.
@@ -54,5 +55,9 @@ func (c *Config) SetDefaults() {
 	}
 	if c.Options.Timeout == 0 {
 		c.Options.Timeout = 30
+	}
+	if c.Options.AutoDisconnect == nil {
+		defaultAutoDisconnect := false
+		c.Options.AutoDisconnect = &defaultAutoDisconnect
 	}
 }

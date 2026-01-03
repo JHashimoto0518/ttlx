@@ -1,0 +1,30 @@
+version: "1.0"
+
+profiles:
+  bastion:
+    host: bastion.example.com
+    port: 22
+    user: user1
+    prompt_marker: "$ "
+    auth:
+      type: password
+      env: BASTION_PASS
+
+  target:
+    host: 10.0.0.50
+    port: 22
+    user: user2
+    prompt_marker: "$ "
+    auth:
+      type: password
+      password_prompt: "password:"
+      env: TARGET_PASS
+
+route:
+  - profile: bastion
+  - profile: target
+    commands:
+      - ls -la
+      - pwd
+
+# options.auto_disconnect 未指定（デフォルト: false）

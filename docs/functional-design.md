@@ -82,6 +82,7 @@ options:
   retry: integer         # リトライ回数
   log: boolean           # ログ取得
   log_file: string       # ログファイルパス
+  auto_disconnect: boolean  # 最終ステップ完了後に自動切断するか（デフォルト: false）
 ```
 
 #### Phase 2 追加スキーマ

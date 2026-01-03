@@ -61,6 +61,10 @@ func Validate(config *Config) error {
 		}
 	}
 
+	// 注: options.auto_disconnectには明示的なバリデーションは不要です。
+	// YAMLパーサー（gopkg.in/yaml.v3）が自動的にboolean型を検証し、
+	// 不正な値（文字列、数値など）はこの地点に到達する前にパースエラーになります。
+
 	return nil
 }
 
