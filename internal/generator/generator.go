@@ -10,7 +10,7 @@ import (
 	"github.com/JHashimoto0518/ttlx/internal/config"
 )
 
-const version = "1.0.0"
+const version = "0.1.0-beta"
 
 // GenerateAll generates TTL scripts for all routes in the configuration.
 func GenerateAll(cfg *config.Config, sourceFile string) (map[string]string, error) {
