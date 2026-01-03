@@ -2,10 +2,10 @@ package config
 
 // Config represents the entire YAML configuration.
 type Config struct {
-	Version  string              `yaml:"version"`
-	Profiles map[string]*Profile `yaml:"profiles"`
-	Route    []*RouteStep        `yaml:"route"`
-	Options  *Options            `yaml:"options,omitempty"`
+	Version  string                       `yaml:"version"`
+	Profiles map[string]*Profile          `yaml:"profiles"`
+	Routes   map[string][]*RouteStep      `yaml:"routes"`
+	Options  *Options                     `yaml:"options,omitempty"`
 }
 
 // Profile represents an SSH connection profile.

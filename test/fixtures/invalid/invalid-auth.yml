@@ -8,5 +8,6 @@ profiles:
     auth:
       type: invalid_type
 
-route:
-  - profile: bastion
+routes:
+  test-route:
+    - profile: bastion

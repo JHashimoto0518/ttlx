@@ -75,15 +75,16 @@ profiles:
       env: TARGET_PASSWORD
       password_prompt: "password:"  # 2段目以降で必須
 
-route:
-  - profile: bastion
-    commands:
-      - echo "踏み台サーバーに接続しました"
+routes:
+  simple-connection:
+    - profile: bastion
+      commands:
+        - echo "踏み台サーバーに接続しました"
 
-  - profile: target
-    commands:
-      - ps aux
-      - df -h
+    - profile: target
+      commands:
+        - ps aux
+        - df -h
 ```
 
 ### 2. TTLスクリプトを生成
@@ -146,15 +147,16 @@ auth:
 SSH接続の順序を定義します：
 
 ```yaml
-route:
-  - profile: bastion       # 1段目
-    commands:              # 実行するコマンド（オプション）
-      - su - root
-      - cd /var/log
+routes:
+  multi-hop-connection:
+    - profile: bastion       # 1段目
+      commands:              # 実行するコマンド（オプション）
+        - su - root
+        - cd /var/log
 
-  - profile: target        # 2段目
-    commands:
-      - ps aux
+    - profile: target        # 2段目
+      commands:
+        - ps aux
 ```
 
 ### グローバルオプション
@@ -180,6 +182,15 @@ ttlx build <config.yml> [フラグ]
 フラグ:
   -o, --output string   出力ファイルパス（デフォルト: <config>.ttl）
       --dry-run         ファイルではなく標準出力に出力
+
+例：
+$ ttlx build config.yml
+Generated: config.ttl
+Generated: config_simple-connection.ttl
+
+$ ttlx build config.yml -o output.ttl
+Generated: output.ttl
+Generated: output_simple-connection.ttl
 ```
 
 ### validate

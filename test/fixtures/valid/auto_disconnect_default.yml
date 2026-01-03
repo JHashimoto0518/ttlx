@@ -20,11 +20,12 @@ profiles:
       password_prompt: "password:"
       env: TARGET_PASS
 
-route:
-  - profile: bastion
-  - profile: target
-    commands:
-      - ls -la
-      - pwd
+routes:
+  auto-disconnect-default:
+    - profile: bastion
+    - profile: target
+      commands:
+        - ls -la
+        - pwd
 
 # options.auto_disconnect 未指定（デフォルト: false）

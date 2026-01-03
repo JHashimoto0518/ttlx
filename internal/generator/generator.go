@@ -11,19 +11,34 @@ import (
 
 const version = "1.0.0"
 
-// Generate generates a TTL script from the configuration.
-func Generate(cfg *config.Config, sourceFile string) (string, error) {
+// GenerateAll generates TTL scripts for all routes in the configuration.
+func GenerateAll(cfg *config.Config, sourceFile string) (map[string]string, error) {
+	result := make(map[string]string)
+
+	for routeName, route := range cfg.Routes {
+		ttl, err := generateRoute(cfg, routeName, route, sourceFile)
+		if err != nil {
+			return nil, fmt.Errorf("failed to generate TTL for route '%s': %w", routeName, err)
+		}
+		result[routeName] = ttl
+	}
+
+	return result, nil
+}
+
+// generateRoute generates a TTL script for a single route.
+func generateRoute(cfg *config.Config, routeName string, route []*config.RouteStep, sourceFile string) (string, error) {
 	var sb strings.Builder
 
 	// ヘッダー生成
-	sb.WriteString(generateHeader(sourceFile))
+	sb.WriteString(generateHeader(sourceFile, routeName))
 
 	// 変数定義生成
 	sb.WriteString(generateVariables(cfg))
 
 	// ルートステップごとの処理生成
 	errorLabels := make([]string, 0)
-	for i, step := range cfg.Route {
+	for i, step := range route {
 		profile := cfg.Profiles[step.Profile]
 		upperProfileName := strings.ToUpper(step.Profile)
 
@@ -62,21 +77,21 @@ func Generate(cfg *config.Config, sourceFile string) (string, error) {
 
 	if autoDisconnect {
 		// 自動切断: 多段接続を順次exit、最後にclosett
-		sb.WriteString(generateAutoDisconnect(len(cfg.Route)))
+		sb.WriteString(generateAutoDisconnect(len(route)))
 	} else {
 		// 接続保持: セッションを維持したまま終了
 		sb.WriteString(successKeepAliveTemplate)
 	}
 
 	// エラーハンドリング生成
-	sb.WriteString(generateErrorHandling(errorLabels, cfg.Route))
+	sb.WriteString(generateErrorHandling(errorLabels, route))
 
 	return sb.String(), nil
 }
 
-func generateHeader(sourceFile string) string {
+func generateHeader(sourceFile, routeName string) string {
 	now := time.Now().Format("2006-01-02 15:04:05")
-	return fmt.Sprintf(headerTemplate, version, sourceFile, now)
+	return fmt.Sprintf(headerTemplate, version, sourceFile, routeName, now)
 }
 
 func generateVariables(cfg *config.Config) string {

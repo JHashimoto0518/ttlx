@@ -89,12 +89,12 @@ func TestValidate_MissingRoute(t *testing.T) {
 				Auth:         &Auth{Type: "password", Prompt: true},
 			},
 		},
-		Route: []*RouteStep{},
+		Routes: map[string][]*RouteStep{"test-route": {}},
 	}
 
 	err := Validate(cfg)
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "route must have at least one step")
+	assert.Contains(t, err.Error(), "route 'test-route' must have at least one step")
 }
 
 func TestValidate_MissingPasswordPrompt(t *testing.T) {
@@ -122,8 +122,10 @@ func TestValidate_PasswordPromptInFirstStep(t *testing.T) {
 				},
 			},
 		},
-		Route: []*RouteStep{
-			{Profile: "bastion"},
+		Routes: map[string][]*RouteStep{
+			"test-route": {
+				{Profile: "bastion"},
+			},
 		},
 	}
 
@@ -147,8 +149,10 @@ func TestValidate_PasswordPromptOnKeyfileAuth(t *testing.T) {
 				},
 			},
 		},
-		Route: []*RouteStep{
-			{Profile: "server"},
+		Routes: map[string][]*RouteStep{
+			"test-route": {
+				{Profile: "server"},
+			},
 		},
 	}
 
@@ -179,9 +183,11 @@ func TestValidate_PasswordPromptWithSingleQuote(t *testing.T) {
 				},
 			},
 		},
-		Route: []*RouteStep{
-			{Profile: "bastion"},
-			{Profile: "target"},
+		Routes: map[string][]*RouteStep{
+			"test-route": {
+				{Profile: "bastion"},
+				{Profile: "target"},
+			},
 		},
 	}
 
@@ -218,10 +224,12 @@ func TestValidate_MultiHopMixedAuth(t *testing.T) {
 				},
 			},
 		},
-		Route: []*RouteStep{
-			{Profile: "bastion"}, // 1st step: password (no password_prompt needed)
-			{Profile: "jump"},    // 2nd step: keyfile (no password_prompt needed)
-			{Profile: "target"},  // 3rd step: password (password_prompt required)
+		Routes: map[string][]*RouteStep{
+			"test-route": {
+				{Profile: "bastion"}, // 1st step: password (no password_prompt needed)
+				{Profile: "jump"},    // 2nd step: keyfile (no password_prompt needed)
+				{Profile: "target"},  // 3rd step: password (password_prompt required)
+			},
 		},
 	}
 

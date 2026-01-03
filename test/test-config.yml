@@ -23,15 +23,16 @@ profiles:
       value: "testpass123"
       password_prompt: "password:"  # 2段目以降で必須
 
-route:
-  - profile: bastion
-    commands:
-      - hostname
+routes:
+  test-connection:
+    - profile: bastion
+      commands:
+        - hostname
 
-  - profile: target
-    commands:
-      - hostname
-      - ls -la
+    - profile: target
+      commands:
+        - hostname
+        - ls -la
 
 options:
   timeout: 30
