@@ -1,0 +1,43 @@
+version: "1.0"
+
+profiles:
+  bastion:
+    host: localhost
+    port: 22220
+    user: testuser
+    prompt_marker: "$ "
+    auth:
+      type: password
+      value: testpass123
+
+  target:
+    host: target
+    port: 2222
+    user: testuser
+    prompt_marker: "$ "
+    auth:
+      type: password
+      value: testpass123
+      password_prompt: "password:"
+
+routes:
+  route-single-hop:
+    - profile: bastion
+      commands:
+        - whoami
+        - hostname
+
+  route-multi-hop:
+    - profile: bastion
+      commands:
+        - echo single-hop-test
+
+    - profile: target
+      commands:
+        - echo multi-hop-test
+        - hostname
+        - ls -la
+
+options:
+  timeout: 30
+  auto_disconnect: false

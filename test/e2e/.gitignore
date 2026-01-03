@@ -1,0 +1,7 @@
+# Generated TTL files
+output/
+
+# SSH keys (generated during setup)
+ssh-keys/id_rsa
+ssh-keys/id_rsa.pub
+ssh-keys/authorized_keys

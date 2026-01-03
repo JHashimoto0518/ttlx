@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Bastionサーバー（踏み台サーバー）
+  bastion:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: ttlx-e2e-bastion
+    hostname: bastion
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Tokyo
+      - USER_NAME=testuser
+      - USER_PASSWORD=testpass123
+      - PASSWORD_ACCESS=true
+      - PUBLIC_KEY_FILE=/config/.ssh/authorized_keys
+    ports:
+      - "22220:2222"
+    volumes:
+      - ./ssh-keys/authorized_keys:/config/.ssh/authorized_keys:ro
+      - ./ssh-keys/id_rsa:/config/.ssh/id_rsa:ro
+    networks:
+      - ttlx-e2e-net
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2222"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Targetサーバー（内部サーバー）
+  target:
+    image: lscr.io/linuxserver/openssh-server:latest
+    container_name: ttlx-e2e-target
+    hostname: target
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Tokyo
+      - USER_NAME=testuser
+      - USER_PASSWORD=testpass123
+      - PASSWORD_ACCESS=true
+    networks:
+      - ttlx-e2e-net
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2222"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+networks:
+  ttlx-e2e-net:
+    driver: bridge

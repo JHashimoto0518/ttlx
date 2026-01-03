@@ -1,0 +1,39 @@
+version: "1.0"
+
+# E2Eテスト: auto_disconnect オプション
+# 目的: auto_disconnect=true で自動切断されることを確認
+
+profiles:
+  bastion:
+    host: localhost
+    port: 22220
+    user: testuser
+    prompt_marker: "$ "
+    auth:
+      type: password
+      value: testpass123
+
+  target:
+    host: target
+    port: 2222
+    user: testuser
+    prompt_marker: "$ "
+    auth:
+      type: password
+      value: testpass123
+      password_prompt: "password:"
+
+routes:
+  auto-disconnect-test:
+    - profile: bastion
+      commands:
+        - echo "connected to bastion"
+
+    - profile: target
+      commands:
+        - echo "connected to target"
+        - hostname
+
+options:
+  timeout: 30
+  auto_disconnect: true
