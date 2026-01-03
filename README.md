@@ -165,6 +165,7 @@ options:
   retry: 3                 # リトライ回数（未実装）
   log: true                # ログ有効化（未実装）
   log_file: /tmp/ttlx.log  # ログファイルパス（未実装）
+  auto_disconnect: true    # 最終ステップ完了後に自動切断、デフォルト: false
 ```
 
 ## CLIコマンド

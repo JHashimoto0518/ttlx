@@ -165,6 +165,7 @@ options:
   retry: 3                 # Number of retries (not implemented yet)
   log: true                # Enable logging (not implemented yet)
   log_file: /tmp/ttlx.log  # Log file path (not implemented yet)
+  auto_disconnect: true    # Auto-disconnect after final step (default: false)
 ```
 
 ## CLI Commands

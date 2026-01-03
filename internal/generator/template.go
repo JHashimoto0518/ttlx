@@ -70,7 +70,14 @@ endif
 
 `
 
-	// 成功終了テンプレート
+	// 成功終了テンプレート（接続保持）
+	successKeepAliveTemplate = `; === Success (Keep connection alive) ===
+:SUCCESS
+end
+
+`
+
+	// 成功終了テンプレート（自動切断）
 	successTemplate = `:SUCCESS
 closett
 end
