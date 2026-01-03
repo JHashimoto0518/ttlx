@@ -1,0 +1,44 @@
+version: "1.0"
+
+profiles:
+  bastion:
+    host: bastion.example.com
+    port: 22
+    user: user1
+    prompt_marker: "$ "
+    auth:
+      type: password
+      prompt: true
+
+  prod-db:
+    host: prod-db.internal
+    port: 22
+    user: dbuser
+    prompt_marker: "$ "
+    auth:
+      type: password
+      prompt: true
+      password_prompt: "password:"
+
+  backup-db:
+    host: backup-db.internal
+    port: 22
+    user: dbuser
+    prompt_marker: "$ "
+    auth:
+      type: password
+      prompt: true
+      password_prompt: "password:"
+
+routes:
+  production:
+    - profile: bastion
+    - profile: prod-db
+      commands:
+        - "systemctl status postgresql"
+
+  backup:
+    - profile: bastion
+    - profile: backup-db
+      commands:
+        - "systemctl status postgresql"

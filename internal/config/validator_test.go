@@ -20,6 +20,10 @@ func TestValidate_Success(t *testing.T) {
 			name: "valid full config",
 			file: "../../test/fixtures/valid/full.yml",
 		},
+		{
+			name: "valid multiple routes config",
+			file: "../../test/fixtures/valid/multiple-routes.yml",
+		},
 	}
 
 	for _, tt := range tests {
@@ -79,42 +83,28 @@ func TestValidate_MissingPromptMarker(t *testing.T) {
 }
 
 func TestValidate_EmptyRoutes(t *testing.T) {
-	cfg := &Config{
-		Version: "1.0",
-		Profiles: map[string]*Profile{
-			"test": {
-				Host:         "localhost",
-				User:         "user",
-				PromptMarker: "$ ",
-				Auth: &Auth{
-					Type:   "password",
-					Prompt: true,
-				},
-			},
-		},
-		Routes: map[string][]*RouteStep{},
-	}
+	cfg, err := LoadConfig("../../test/fixtures/invalid/empty-routes.yml")
+	require.NoError(t, err)
 
-	err := Validate(cfg)
+	err = Validate(cfg)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "routes must have at least one route")
 }
 
-func TestValidate_MissingRoute(t *testing.T) {
-	cfg := &Config{
-		Version: "1.0",
-		Profiles: map[string]*Profile{
-			"test": {
-				Host:         "example.com",
-				User:         "user",
-				PromptMarker: "$ ",
-				Auth:         &Auth{Type: "password", Prompt: true},
-			},
-		},
-		Routes: map[string][]*RouteStep{"test-route": {}},
-	}
+func TestValidate_InvalidRouteName(t *testing.T) {
+	cfg, err := LoadConfig("../../test/fixtures/invalid/invalid-route-name.yml")
+	require.NoError(t, err)
 
-	err := Validate(cfg)
+	err = Validate(cfg)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "contains invalid characters")
+}
+
+func TestValidate_MissingRoute(t *testing.T) {
+	cfg, err := LoadConfig("../../test/fixtures/invalid/empty-route.yml")
+	require.NoError(t, err)
+
+	err = Validate(cfg)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "route 'test-route' must have at least one step")
 }
