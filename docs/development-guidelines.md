@@ -592,6 +592,207 @@ fix(generator): handle special characters in passwords
 
 ---
 
+## バージョニングとリリースポリシー
+
+### バージョン番号の方針
+
+本プロジェクトは **セマンティックバージョニング（Semantic Versioning）** に準拠します。
+
+```
+<major>.<minor>.<patch>[-<pre-release>]
+
+例:
+1.0.0       # 安定版
+0.1.0-beta  # ベータ版
+0.2.0-rc.1  # リリース候補
+```
+
+#### バージョンの意味
+
+- **Major（メジャー）**: 後方互換性のない変更
+- **Minor（マイナー）**: 後方互換性のある機能追加
+- **Patch（パッチ）**: 後方互換性のあるバグ修正
+- **Pre-release（プレリリース）**: 開発版・ベータ版・RC版など
+
+---
+
+### リリース前の後方互換性ポリシー
+
+#### ベータ版（0.x.x-beta）における後方互換性
+
+**重要**: ベータ版では後方互換性を担保する必要はありません。
+
+**理由**:
+- ベータ版は正式リリース前の開発版であり、仕様が流動的
+- 機能の追加・変更・削除が頻繁に発生する
+- ユーザーはベータ版使用時に破壊的変更があることを理解している
+
+**適用例**:
+```yaml
+# v0.1.0-beta で route → routes に変更
+# 後方互換性なし（旧仕様は削除）
+
+# ❌ 非推奨（ベータ版では不要）
+route:           # deprecated, use routes instead
+  - profile: bastion
+
+# ✅ 推奨（新仕様のみサポート）
+routes:
+  main:
+    - profile: bastion
+```
+
+**開発時の指針**:
+- ベータ版では設計のシンプルさを優先
+- 後方互換性のためのレガシーコードを残さない
+- CHANGELOG に破壊的変更（BREAKING CHANGE）を明記
+- 移行方法を README に記載
+
+---
+
+### 安定版（1.0.0以降）における後方互換性
+
+**重要**: 1.0.0以降の安定版では、後方互換性を厳密に管理します。
+
+#### Major バージョンアップ時（破壊的変更）
+- 後方互換性のない変更が許可される
+- CHANGELOG に詳細な移行ガイドを記載
+- 可能な限り非推奨警告を先に導入（1つ前のバージョンで警告）
+
+#### Minor バージョンアップ時（機能追加）
+- 後方互換性を維持
+- 既存機能の動作を変更しない
+- 新機能の追加のみ
+
+#### Patch バージョンアップ時（バグ修正）
+- 後方互換性を維持
+- バグ修正のみ（新機能追加なし）
+
+---
+
+### バージョン管理の実践
+
+#### バージョン番号の更新箇所
+
+バージョン番号は以下のファイルで管理されます:
+
+1. **`internal/cli/version.go`** - CLI バージョン表示用
+   ```go
+   const version = "0.1.0-beta"
+   ```
+
+2. **`internal/generator/generator.go`** - TTL ヘッダー生成用
+   ```go
+   const version = "0.1.0-beta"
+   ```
+
+3. **`CHANGELOG.md`** - 変更履歴
+
+#### バージョンアップ手順
+
+1. **バージョン番号の決定**
+   - 変更内容に応じて適切なバージョンを決定
+   - ベータ版: `0.x.x-beta`
+   - 安定版: `x.y.z`
+
+2. **コード内のバージョン更新**
+   ```bash
+   # 2箇所のバージョン定数を更新
+   vim internal/cli/version.go
+   vim internal/generator/generator.go
+   ```
+
+3. **CHANGELOG.md の更新**
+   - `[Unreleased]` セクションを新バージョンに変更
+   - 変更内容を `Added`, `Changed`, `Fixed` などに分類
+   - 破壊的変更は `**BREAKING**:` プレフィックスで明示
+
+4. **Git タグの作成**
+   ```bash
+   git tag -a v0.1.0-beta -m "Release version 0.1.0-beta"
+   git push origin v0.1.0-beta
+   ```
+
+---
+
+### リリースタイプ
+
+#### 開発版（Development）
+- バージョン: `0.0.x`
+- 対象: 開発者のみ
+- 後方互換性: 不要
+
+#### ベータ版（Beta）
+- バージョン: `0.x.x-beta`
+- 対象: 早期アダプター、テスター
+- 後方互換性: **不要**
+- CHANGELOG に全ての破壊的変更を明記
+
+#### リリース候補（Release Candidate）
+- バージョン: `x.y.z-rc.N`
+- 対象: 本番環境での最終検証
+- 後方互換性: 必須（安定版と同等）
+
+#### 安定版（Stable）
+- バージョン: `1.0.0` 以降
+- 対象: 全ユーザー
+- 後方互換性: 厳密に管理
+
+---
+
+### CHANGELOG.md の記載ルール
+
+#### フォーマット
+
+```markdown
+## [Unreleased]
+
+### Note
+Version 1.0.0 will be the first stable release. Currently in beta.
+
+## [0.2.0-beta] - 2026-01-15
+
+### Added
+- 新機能の説明
+
+### Changed
+- **BREAKING**: 破壊的変更の説明
+- その他の変更
+
+### Fixed
+- バグ修正の説明
+
+### Deprecated
+- 非推奨機能（将来削除予定）
+
+### Removed
+- 削除された機能
+
+### Security
+- セキュリティ修正
+```
+
+#### 破壊的変更の記載方法
+
+```markdown
+### Changed
+- **BREAKING**: `route` field is no longer supported. Use `routes` instead.
+  - Migration: Rename `route:` to `routes:` and add route names as keys.
+  - Example:
+    ```yaml
+    # Before (v0.0.x)
+    route:
+      - profile: bastion
+
+    # After (v0.1.0-beta)
+    routes:
+      main:
+        - profile: bastion
+    ```
+```
+
+---
+
 ## スタイリング規約
 
 ### gofmt に準拠
