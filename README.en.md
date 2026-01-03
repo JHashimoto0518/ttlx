@@ -180,17 +180,19 @@ Generate a TTL script from YAML configuration:
 ttlx build <config.yml> [flags]
 
 Flags:
-  -o, --output string   Output file path (default: <config>.ttl)
+  -o, --output string   Output directory path (default: current directory)
       --dry-run         Print to stdout instead of file
 
 Example:
 $ ttlx build config.yml
-Generated: config.ttl
-Generated: config_simple-connection.ttl
+Generated TTL files:
+  - config.ttl
+  - config_simple-connection.ttl
 
-$ ttlx build config.yml -o output.ttl
-Generated: output.ttl
-Generated: output_simple-connection.ttl
+$ ttlx build config.yml -o output/
+Generated TTL files in output/:
+  - config.ttl
+  - config_simple-connection.ttl
 ```
 
 ### validate

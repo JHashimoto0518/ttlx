@@ -180,17 +180,19 @@ YAML設定からTTLスクリプトを生成：
 ttlx build <config.yml> [フラグ]
 
 フラグ:
-  -o, --output string   出力ファイルパス（デフォルト: <config>.ttl）
+  -o, --output string   出力ディレクトリパス（デフォルト: カレントディレクトリ）
       --dry-run         ファイルではなく標準出力に出力
 
 例：
 $ ttlx build config.yml
-Generated: config.ttl
-Generated: config_simple-connection.ttl
+Generated TTL files:
+  - config.ttl
+  - config_simple-connection.ttl
 
-$ ttlx build config.yml -o output.ttl
-Generated: output.ttl
-Generated: output_simple-connection.ttl
+$ ttlx build config.yml -o output/
+Generated TTL files in output/:
+  - config.ttl
+  - config_simple-connection.ttl
 ```
 
 ### validate

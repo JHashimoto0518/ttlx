@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Multiple routes support**: Define multiple connection routes in a single YAML file
+  - `routes` (plural) with named routes replaces single `route` field
+  - Each route generates a separate TTL file
+  - Profile reuse across multiple routes
+  - Route name validation (alphanumeric, hyphens, underscores only)
+
+### Changed
+
+- **BREAKING**: `route` (singular) field is no longer supported. Use `routes` (plural) with named routes instead
+- **BREAKING**: `-o` / `--output` flag now specifies output **directory** instead of output file path
+  - Default: current directory (`.`)
+  - Generated files are named `<route-name>.ttl`
+  - Multiple TTL files are generated when multiple routes are defined
+- CLI output format updated to show list of generated TTL files
+
 ### Fixed
 
 - Include password in connect command `/passwd` option instead of separate `sendln` (#6)
