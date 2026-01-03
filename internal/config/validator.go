@@ -61,9 +61,9 @@ func Validate(config *Config) error {
 		}
 	}
 
-	// Note: options.auto_disconnect does not require explicit validation.
-	// The YAML parser (gopkg.in/yaml.v3) automatically validates the boolean type,
-	// and invalid values (e.g., strings, numbers) will cause a parse error before reaching this point.
+	// 注: options.auto_disconnectには明示的なバリデーションは不要です。
+	// YAMLパーサー（gopkg.in/yaml.v3）が自動的にboolean型を検証し、
+	// 不正な値（文字列、数値など）はこの地点に到達する前にパースエラーになります。
 
 	return nil
 }
