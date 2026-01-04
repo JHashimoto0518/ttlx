@@ -56,7 +56,8 @@ func generateRoute(cfg *config.Config, routeName string, route []*config.RouteSt
 			sb.WriteString(generateConnect(i+1, step.Profile, upperProfileName, profile))
 
 			// パスワード認証処理（connect コマンドに含まれていない場合のみ）
-			if profile.Auth.Type == "password" && profile.Auth.Value == "" {
+			// 環境変数認証の場合はconnectコマンド内でexpandenvを使用するため、ここでは処理しない
+			if profile.Auth.Type == "password" && profile.Auth.Value == "" && profile.Auth.Env == "" {
 				sb.WriteString(generatePasswordAuth(step.Profile, profile.Auth))
 			}
 		} else {
@@ -115,6 +116,25 @@ func generateConnect(stepNum int, profileName, upperProfileName string, profile 
 	authType := profile.Auth.Type
 	keyfileOption := ""
 	passwordOption := ""
+
+	// 環境変数からパスワードを取得する場合は専用テンプレートを使用
+	if authType == "password" && profile.Auth.Env != "" {
+		return fmt.Sprintf(
+			connectWithEnvPasswordTemplate,
+			stepNum,
+			profileName,
+			upperProfileName,
+			profile.Host,
+			profile.Port,
+			authType,
+			profile.User,
+			keyfileOption,
+			profile.Auth.Env,
+			upperProfileName,
+			profile.PromptMarker,
+			upperProfileName,
+		)
+	}
 
 	if authType == "keyfile" {
 		keyfileOption = fmt.Sprintf(" /keyfile=%s", profile.Auth.Path)

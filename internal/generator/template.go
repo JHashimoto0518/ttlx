@@ -31,6 +31,22 @@ endif
 
 `
 
+	// 接続テンプレート（環境変数パスワード認証）
+	connectWithEnvPasswordTemplate = `; === Step %d: %s ===
+:CONNECT_%s
+; Expand environment variable in connect command
+expandenv connectcmd '%s:%d /ssh /auth=%s /user=%s%s /passwd=$%s'
+connect connectcmd
+if result <> 2 then
+    goto ERROR_CONNECT_%s
+endif
+wait '%s'
+if result = 0 then
+    goto TIMEOUT_%s
+endif
+
+`
+
 	// SSH コマンドテンプレート（2番目以降のステップ）
 	sshTemplate = `; === Step %d: %s ===
 sendln 'ssh %s@%s -p %d'
