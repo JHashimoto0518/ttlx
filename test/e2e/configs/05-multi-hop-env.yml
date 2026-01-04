@@ -1,0 +1,40 @@
+version: "1.0"
+
+# E2Eテスト: 多段SSH接続で環境変数パスワード認証
+# 目的: 2段階目でも環境変数からパスワードを取得できることを確認
+# 実行前: export BASTION_PASSWORD=testpass123
+# 実行前: export TARGET_PASSWORD=testpass123
+
+profiles:
+  bastion:
+    host: localhost
+    port: 22220
+    user: testuser
+    prompt_marker: "$ "
+    auth:
+      type: password
+      env: BASTION_PASSWORD
+
+  target:
+    host: target
+    port: 2222
+    user: testuser
+    prompt_marker: "$ "
+    auth:
+      type: password
+      env: TARGET_PASSWORD
+      password_prompt: "password:"
+
+routes:
+  multi-hop-env:
+    - profile: bastion
+      commands:
+        - echo "connected to bastion"
+
+    - profile: target
+      commands:
+        - echo "connected to target"
+        - hostname
+
+options:
+  timeout: 30
