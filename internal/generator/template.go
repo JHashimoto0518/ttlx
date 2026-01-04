@@ -35,7 +35,7 @@ endif
 	connectWithEnvPasswordTemplate = `; === Step %d: %s ===
 :CONNECT_%s
 ; Expand environment variable in connect command
-expandenv connectcmd '%s:%d /ssh /auth=%s /user=%s%s /passwd=$%s'
+expandenv connectcmd '%s:%d /ssh /auth=%s /user=%s%s /passwd=%%%s%%'
 connect connectcmd
 if result <> 2 then
     goto ERROR_CONNECT_%s

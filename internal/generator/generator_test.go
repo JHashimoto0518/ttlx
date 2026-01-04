@@ -85,7 +85,7 @@ func TestGenerate_Full(t *testing.T) {
 
 	// 環境変数からのパスワード読み込み
 	assert.Contains(t, ttl, "expandenv connectcmd")
-	assert.Contains(t, ttl, "/passwd=$BASTION_PASSWORD'")
+	assert.Contains(t, ttl, "/passwd=%BASTION_PASSWORD%'")
 
 	// コマンド実行の確認
 	assert.Contains(t, ttl, "sendln 'su - root'")
