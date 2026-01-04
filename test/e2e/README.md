@@ -97,6 +97,20 @@ cd test/e2e
   - [ ] 各ステップのコマンドが実行される
   - [ ] 接続が維持される
 
+##### 05-multi-hop-env.yml
+- [ ] 環境変数 `BASTION_PASSWORD` が読み込まれる（1段階目）
+- [ ] 環境変数 `TARGET_PASSWORD` が読み込まれる（2段階目）
+- [ ] bastionに環境変数パスワード認証で接続できる
+- [ ] targetに環境変数パスワード認証で多段接続できる
+- [ ] 両方のステップで `expandenv` が使用される（一貫性）
+- [ ] 各ステップのコマンドが実行される
+
+**環境変数の設定:**
+```cmd
+set BASTION_PASSWORD=testpass123
+set TARGET_PASSWORD=testpass123
+```
+
 ### 3. テスト環境のクリーンアップ
 
 ```bash
@@ -120,11 +134,13 @@ test/e2e/
 │   ├── 01-keyfile-auth.yml
 │   ├── 02-password-env.yml
 │   ├── 03-auto-disconnect.yml
-│   └── 04-multiple-routes.yml
+│   ├── 04-multiple-routes.yml
+│   └── 05-multi-hop-env.yml
 ├── output/                    # 生成されたTTLファイル（自動生成）
 │   ├── keyfile-test.ttl
 │   ├── env-password-test.ttl
 │   ├── auto-disconnect-test.ttl
+│   ├── multi-hop-env.ttl
 │   ├── route-single-hop.ttl
 │   └── route-multi-hop.ttl
 └── ssh-keys/                  # テスト用SSH鍵（自動生成）

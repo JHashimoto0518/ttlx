@@ -59,7 +59,7 @@ endif
 
 	// パスワード認証テンプレート（環境変数）
 	passwordEnvTemplate = `; Password authentication (from environment)
-getenv '%s' password
+expandenv password '%%%s%%'
 sendln password
 
 `
