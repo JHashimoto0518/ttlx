@@ -17,12 +17,12 @@ By defining connection settings and commands as reusable profiles, it improves m
 | TTL Feature Category | Status | Description |
 |---------------------|--------|-------------|
 | **SSH Connection** | ✅ Supported | Multi-hop SSH connections (via bastion hosts) |
-| **Authentication** | ✅ Supported | Password auth (env var/runtime prompt/direct)<br>Public key authentication |
+| **Authentication** | ✅ Supported | Password auth (password file/direct)<br>Public key authentication |
 | **Command Execution** | ✅ Supported | Execute arbitrary commands after connection |
 | **Error Handling** | ✅ Supported | Timeout handling, connection failure handling |
 | **File Transfer** | 🔄 Not Yet | Planned for future release |
 | **Dialog Display** | ⚠️ Partial | Password prompt and error messages only |
-| **Variable Operations** | ⚠️ Partial | Environment variable reading only |
+| **Variable Operations** | ⚠️ Partial | Password file reading, string concatenation |
 | **Loops & Branching** | 🔄 Not Yet | Planned for future release |
 
 ## Features
@@ -64,7 +64,7 @@ profiles:
     prompt_marker: "$ "
     auth:
       type: password
-      prompt: true
+      password_file: passwords.dat  # Read from password file
 
   target:
     host: 10.0.0.50
@@ -72,7 +72,7 @@ profiles:
     prompt_marker: "$ "
     auth:
       type: password
-      env: TARGET_PASSWORD
+      password_file: passwords.dat  # Read from password file
       password_prompt: "password:"  # Required for 2nd+ steps
 
 routes:
@@ -127,12 +127,17 @@ profiles:
 auth:
   type: password
   # Choose one of the following:
-  prompt: true              # Prompt for password at runtime
-  env: ENV_VAR_NAME        # Read from environment variable
-  value: "password"        # Direct password (not recommended)
+  password_file: passwords.dat  # Read from password file (recommended)
+                                # Default: "passwords.dat" if omitted
+  value: "password"             # Direct password (for testing, not recommended)
   # Required for 2nd+ route steps:
   password_prompt: "password:"  # Password prompt string to wait for
 ```
+
+**Using Password Files:**
+- Uses Tera Term's `getpassword` command to read from password files
+- Password name is automatically set to the profile name
+- For creating password files, see [Tera Term Official Documentation](https://teratermproject.github.io/manual/5/en/macro/command/getpassword.html)
 
 #### Public Key Authentication
 

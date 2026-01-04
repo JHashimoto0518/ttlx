@@ -7,7 +7,7 @@ profiles:
     prompt_marker: "$ "
     auth:
       type: password
-      prompt: true
+      password_file: passwords.dat
 
   target:
     host: 10.0.0.50
@@ -15,7 +15,7 @@ profiles:
     prompt_marker: "$ "
     auth:
       type: password
-      prompt: true
+      password_file: passwords.dat
       password_prompt: "password:"  # 2段目以降で必須
 
 routes:

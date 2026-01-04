@@ -25,9 +25,10 @@
 | ファイル | テスト内容 | 検証項目 |
 |---------|----------|---------|
 | `01-keyfile-auth.yml` | 公開鍵認証 | keyfile認証でSSH接続できるか |
-| `02-password-env.yml` | 環境変数パスワード認証 | 環境変数からパスワードを取得して接続できるか |
+| `02-password-file.yml` | パスワードファイル認証 | getpasswordでパスワードファイルから認証できるか |
 | `03-auto-disconnect.yml` | 自動切断 | auto_disconnect=true で接続が自動切断されるか |
 | `04-multiple-routes.yml` | 複数ルート | 1つのYAMLから複数のTTLが生成され、それぞれが動作するか |
+| `05-multi-hop-password-file.yml` | 多段接続（パスワードファイル） | getpasswordを使用して多段SSH接続できるか |
 
 ## セットアップと実行
 
@@ -49,10 +50,9 @@ cd test/e2e
 
 1. **Tera Termを起動**
 
-2. **環境変数の設定**（02-password-env.ttl をテストする場合）
-   ```cmd
-   set TEST_SSH_PASSWORD=testpass123
-   ```
+2. **パスワードファイルの準備**（02-password-file.ttl をテストする場合）
+   - Tera Termのパスワードファイル機能を使用
+   - パスワードファイル（passwords.dat）に testpass123 を設定
 
 3. **TTLマクロの実行**
    ```
@@ -74,9 +74,9 @@ cd test/e2e
 - [ ] パスワード入力なしで接続完了
 - [ ] `whoami`, `hostname` コマンドが実行される
 
-##### 02-password-env.yml
-- [ ] 環境変数 `TEST_SSH_PASSWORD` が読み込まれる
-- [ ] パスワード認証でbastionに接続できる
+##### 02-password-file.yml
+- [ ] getpasswordでパスワードファイルが読み込まれる
+- [ ] パスワードファイル認証でbastionに接続できる
 - [ ] コマンドが正常に実行される
 
 ##### 03-auto-disconnect.yml
@@ -97,19 +97,17 @@ cd test/e2e
   - [ ] 各ステップのコマンドが実行される
   - [ ] 接続が維持される
 
-##### 05-multi-hop-env.yml
-- [ ] 環境変数 `BASTION_PASSWORD` が読み込まれる（1段階目）
-- [ ] 環境変数 `TARGET_PASSWORD` が読み込まれる（2段階目）
-- [ ] bastionに環境変数パスワード認証で接続できる
-- [ ] targetに環境変数パスワード認証で多段接続できる
-- [ ] 両方のステップで `expandenv` が使用される（一貫性）
+##### 05-multi-hop-password-file.yml
+- [ ] getpasswordでパスワードファイルが読み込まれる（1段階目）
+- [ ] getpasswordでパスワードファイルが読み込まれる（2段階目）
+- [ ] bastionにパスワードファイル認証で接続できる
+- [ ] targetにパスワードファイル認証で多段接続できる
+- [ ] 両方のステップで `getpassword` が使用される（一貫性）
 - [ ] 各ステップのコマンドが実行される
 
-**環境変数の設定:**
-```cmd
-set BASTION_PASSWORD=testpass123
-set TARGET_PASSWORD=testpass123
-```
+**パスワードファイルの準備:**
+- Tera Termのパスワードファイル機能を使用
+- パスワードファイル（passwords.dat）に bastion と target のパスワード (testpass123) を設定
 
 ### 3. テスト環境のクリーンアップ
 
@@ -132,15 +130,15 @@ test/e2e/
 ├── teardown.sh                # クリーンアップスクリプト
 ├── configs/                   # テスト用YAMLファイル
 │   ├── 01-keyfile-auth.yml
-│   ├── 02-password-env.yml
+│   ├── 02-password-file.yml
 │   ├── 03-auto-disconnect.yml
 │   ├── 04-multiple-routes.yml
-│   └── 05-multi-hop-env.yml
+│   └── 05-multi-hop-password-file.yml
 ├── output/                    # 生成されたTTLファイル（自動生成）
 │   ├── keyfile-test.ttl
-│   ├── env-password-test.ttl
+│   ├── password-file-test.ttl
 │   ├── auto-disconnect-test.ttl
-│   ├── multi-hop-env.ttl
+│   ├── multi-hop-password-file.ttl
 │   ├── route-single-hop.ttl
 │   └── route-multi-hop.ttl
 └── ssh-keys/                  # テスト用SSH鍵（自動生成）

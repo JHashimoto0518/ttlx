@@ -31,11 +31,31 @@ endif
 
 `
 
-	// 接続テンプレート（環境変数パスワード認証）
-	connectWithEnvPasswordTemplate = `; === Step %d: %s ===
+	// SSH コマンドテンプレート（2番目以降のステップ）
+	sshTemplate = `; === Step %d: %s ===
+sendln 'ssh %s@%s -p %d'
+wait '%s'
+if result = 0 then
+    goto TIMEOUT_%s
+endif
+
+`
+
+	// パスワード認証テンプレート（直接指定）
+	passwordValueTemplate = `; Password authentication
+sendln '%s'
+
+`
+
+	// パスワード認証テンプレート（パスワードファイル - 第1ステップ）
+	passwordFileConnectTemplate = `; === Step %d: %s ===
 :CONNECT_%s
-; Expand environment variable in connect command
-expandenv connectcmd '%s:%d /ssh /auth=%s /user=%s%s /passwd=%%%s%%'
+; Password authentication (from password file)
+getpassword '%s' '%s' password
+
+; Build connect command with password
+strconcat connectcmd '%s:%d /ssh /auth=%s /user=%s%s /passwd='
+strconcat connectcmd password
 connect connectcmd
 if result <> 2 then
     goto ERROR_CONNECT_%s
@@ -47,33 +67,10 @@ endif
 
 `
 
-	// SSH コマンドテンプレート（2番目以降のステップ）
-	sshTemplate = `; === Step %d: %s ===
-sendln 'ssh %s@%s -p %d'
-wait '%s'
-if result = 0 then
-    goto TIMEOUT_%s
-endif
-
-`
-
-	// パスワード認証テンプレート（環境変数）
-	passwordEnvTemplate = `; Password authentication (from environment)
-expandenv password '%%%s%%'
+	// パスワード認証テンプレート（パスワードファイル - 第2ステップ以降）
+	passwordFileTemplate = `; Password authentication (from password file)
+getpassword '%s' '%s' password
 sendln password
-
-`
-
-	// パスワード認証テンプレート（実行時入力）
-	passwordPromptTemplate = `; Password authentication (prompt)
-passwordbox 'Enter password for %s:' 'password'
-sendln password
-
-`
-
-	// パスワード認証テンプレート（直接指定）
-	passwordValueTemplate = `; Password authentication
-sendln '%s'
 
 `
 

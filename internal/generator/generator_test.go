@@ -37,15 +37,15 @@ func TestGenerate_Simple(t *testing.T) {
 
 	// 接続処理の確認（最初のステップ）
 	assert.Contains(t, ttl, ":CONNECT_BASTION")
-	assert.Contains(t, ttl, "connect 'bastion.example.com:22 /ssh /auth=password /user=user1'")
-
-	// パスワード認証の確認
-	assert.Contains(t, ttl, "passwordbox 'Enter password for bastion:' 'password'")
+	assert.Contains(t, ttl, "getpassword 'passwords.dat' 'bastion' password")
+	assert.Contains(t, ttl, "strconcat connectcmd 'bastion.example.com:22 /ssh /auth=password /user=user1")
+	assert.Contains(t, ttl, "strconcat connectcmd password")
+	assert.Contains(t, ttl, "connect connectcmd")
 
 	// 2番目のステップの確認（ポート指定含む）
 	assert.Contains(t, ttl, "sendln 'ssh user2@10.0.0.50 -p 22'")
 	assert.Contains(t, ttl, "wait 'password:'")
-	assert.Contains(t, ttl, "passwordbox 'Enter password for target:' 'password'")
+	assert.Contains(t, ttl, "getpassword 'passwords.dat' 'target' password")
 
 	// エラーハンドリングの確認
 	assert.Contains(t, ttl, ":ERROR_CONNECT_BASTION")
@@ -78,14 +78,12 @@ func TestGenerate_Full(t *testing.T) {
 	// カスタムタイムアウトの確認
 	assert.Contains(t, ttl, "timeout = 60")
 
-	// 接続処理の確認
+	// 接続処理の確認（パスワードファイル認証）
 	assert.Contains(t, ttl, ":CONNECT_BASTION")
-	assert.Contains(t, ttl, "expandenv connectcmd 'bastion.example.com:22 /ssh /auth=password /user=user1")
+	assert.Contains(t, ttl, "getpassword 'passwords.dat' 'bastion' password")
+	assert.Contains(t, ttl, "strconcat connectcmd 'bastion.example.com:22 /ssh /auth=password /user=user1")
+	assert.Contains(t, ttl, "strconcat connectcmd password")
 	assert.Contains(t, ttl, "connect connectcmd")
-
-	// 環境変数からのパスワード読み込み
-	assert.Contains(t, ttl, "expandenv connectcmd")
-	assert.Contains(t, ttl, "/passwd=%BASTION_PASSWORD%'")
 
 	// コマンド実行の確認
 	assert.Contains(t, ttl, "sendln 'su - root'")
@@ -294,11 +292,11 @@ func buildTestConfig(autoDisconnect *bool, routeSteps int) *config.Config {
 		cfg.Profiles[profileName] = &config.Profile{
 			Host:         "example.com",
 			Port:         22,
-			User:         "user",
+			User:          "user",
 			PromptMarker: "$ ",
 			Auth: &config.Auth{
-				Type:   "password",
-				Prompt: true,
+				Type:         "password",
+				PasswordFile: "passwords.dat",
 			},
 		}
 
