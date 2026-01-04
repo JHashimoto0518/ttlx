@@ -129,7 +129,7 @@ func TestValidate_PasswordPromptInFirstStep(t *testing.T) {
 				PromptMarker: "$ ",
 				Auth: &Auth{
 					Type:           "password",
-					Prompt:         true,
+					PasswordFile:   "passwords.dat",
 					PasswordPrompt: "password:", // Allowed in 1st step (ignored)
 				},
 			},
@@ -182,7 +182,7 @@ func TestValidate_PasswordPromptWithSingleQuote(t *testing.T) {
 				Host:         "bastion.example.com",
 				User:         "user1",
 				PromptMarker: "$ ",
-				Auth:         &Auth{Type: "password", Prompt: true},
+				Auth:         &Auth{Type: "password", PasswordFile: "passwords.dat"},
 			},
 			"target": {
 				Host:         "target.example.com",
@@ -190,7 +190,7 @@ func TestValidate_PasswordPromptWithSingleQuote(t *testing.T) {
 				PromptMarker: "$ ",
 				Auth: &Auth{
 					Type:           "password",
-					Prompt:         true,
+					PasswordFile:   "passwords.dat",
 					PasswordPrompt: "password':", // Single quote should be rejected
 				},
 			},
@@ -217,7 +217,7 @@ func TestValidate_MultiHopMixedAuth(t *testing.T) {
 				Host:         "bastion.example.com",
 				User:         "user1",
 				PromptMarker: "$ ",
-				Auth:         &Auth{Type: "password", Prompt: true},
+				Auth:         &Auth{Type: "password", PasswordFile: "passwords.dat"},
 			},
 			"jump": {
 				Host:         "jump.internal",
@@ -231,7 +231,7 @@ func TestValidate_MultiHopMixedAuth(t *testing.T) {
 				PromptMarker: "$ ",
 				Auth: &Auth{
 					Type:           "password",
-					Prompt:         true,
+					PasswordFile:   "passwords.dat",
 					PasswordPrompt: "password:",
 				},
 			},
@@ -261,19 +261,19 @@ func TestValidateAuth_Password(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "password with env",
-			auth:    &Auth{Type: "password", Env: "PASSWORD_ENV"},
+			name:    "password with password_file",
+			auth:    &Auth{Type: "password", PasswordFile: "passwords.dat"},
 			wantErr: false,
 		},
 		{
-			name:    "password with prompt",
-			auth:    &Auth{Type: "password", Prompt: true},
-			wantErr: false,
-		},
-		{
-			name:    "password without any source",
+			name:    "password without any source (gets default password_file)",
 			auth:    &Auth{Type: "password"},
-			wantErr: true,
+			wantErr: false, // デフォルト値が設定されるため成功
+		},
+		{
+			name:    "password with both value and password_file",
+			auth:    &Auth{Type: "password", Value: "secret", PasswordFile: "passwords.dat"},
+			wantErr: true, // 相互排他エラー
 		},
 	}
 

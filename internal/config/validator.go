@@ -95,9 +95,14 @@ func validateAuth(auth *Auth) error {
 
 	switch auth.Type {
 	case "password":
-		// Value, Env, Prompt のいずれか1つが必要
-		if auth.Value == "" && auth.Env == "" && !auth.Prompt {
-			return errors.New("password auth requires 'value', 'env', or 'prompt'")
+		// デフォルト値設定: value と password_file が両方空の場合、password_file にデフォルト値を設定
+		if auth.Value == "" && auth.PasswordFile == "" {
+			auth.PasswordFile = "passwords.dat"
+		}
+
+		// 相互排他性チェック: value と password_file の同時指定は禁止
+		if auth.Value != "" && auth.PasswordFile != "" {
+			return errors.New("password auth: 'value' and 'password_file' are mutually exclusive")
 		}
 	case "keyfile":
 		if auth.Path == "" {

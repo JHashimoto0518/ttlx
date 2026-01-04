@@ -53,13 +53,8 @@ func generateRoute(cfg *config.Config, routeName string, route []*config.RouteSt
 
 		if i == 0 {
 			// 最初のステップ: connect コマンド
+			// パスワード認証はすべて generateConnect() 内で処理される
 			sb.WriteString(generateConnect(i+1, step.Profile, upperProfileName, profile))
-
-			// パスワード認証処理（connect コマンドに含まれていない場合のみ）
-			// 環境変数認証の場合はconnectコマンド内でexpandenvを使用するため、ここでは処理しない
-			if profile.Auth.Type == "password" && profile.Auth.Value == "" && profile.Auth.Env == "" {
-				sb.WriteString(generatePasswordAuth(step.Profile, profile.Auth))
-			}
 		} else {
 			// 2番目以降のステップ: ssh コマンド
 			sb.WriteString(generateSSH(i+1, step.Profile, upperProfileName, profile))
@@ -117,19 +112,20 @@ func generateConnect(stepNum int, profileName, upperProfileName string, profile 
 	keyfileOption := ""
 	passwordOption := ""
 
-	// 環境変数からパスワードを取得する場合は専用テンプレートを使用
-	if authType == "password" && profile.Auth.Env != "" {
+	// パスワードファイルから取得する場合は専用テンプレートを使用
+	if authType == "password" && profile.Auth.PasswordFile != "" {
 		return fmt.Sprintf(
-			connectWithEnvPasswordTemplate,
+			passwordFileConnectTemplate,
 			stepNum,
 			profileName,
 			upperProfileName,
+			profile.Auth.PasswordFile,
+			profileName, // password name = profile name
 			profile.Host,
 			profile.Port,
 			authType,
 			profile.User,
 			keyfileOption,
-			profile.Auth.Env,
 			upperProfileName,
 			profile.PromptMarker,
 			upperProfileName,
@@ -174,15 +170,16 @@ func generateSSH(stepNum int, profileName, upperProfileName string, profile *con
 }
 
 func generatePasswordAuth(profileName string, auth *config.Auth) string {
-	if auth.Env != "" {
-		return fmt.Sprintf(passwordEnvTemplate, auth.Env)
+	// password_fileが設定されている場合（デフォルト値含む）
+	if auth.PasswordFile != "" {
+		return fmt.Sprintf(passwordFileTemplate, auth.PasswordFile, profileName)
 	}
-	if auth.Prompt {
-		return fmt.Sprintf(passwordPromptTemplate, profileName)
-	}
+
+	// 直接パスワード指定
 	if auth.Value != "" {
 		return fmt.Sprintf(passwordValueTemplate, auth.Value)
 	}
+
 	return ""
 }
 

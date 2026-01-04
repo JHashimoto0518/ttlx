@@ -17,12 +17,12 @@ ttlxは、YAML設定ファイルからTera Termマクロ（TTL）スクリプト
 | TTL機能カテゴリ | 対応状況 | 説明 |
 |----------------|---------|------|
 | **SSH接続** | ✅ 対応 | 多段SSH接続（踏み台サーバー経由） |
-| **認証** | ✅ 対応 | パスワード認証（環境変数/実行時入力/直接指定）<br>公開鍵認証 |
+| **認証** | ✅ 対応 | パスワード認証（パスワードファイル/直接指定）<br>公開鍵認証 |
 | **コマンド実行** | ✅ 対応 | 接続後の任意コマンド実行 |
 | **エラーハンドリング** | ✅ 対応 | タイムアウト処理、接続失敗時の処理 |
 | **ファイル転送** | 🔄 未対応 | 将来対応予定 |
 | **ダイアログ表示** | ⚠️ 部分対応 | パスワード入力、エラーメッセージのみ |
-| **変数操作** | ⚠️ 部分対応 | 環境変数読み込みのみ |
+| **変数操作** | ⚠️ 部分対応 | パスワードファイル読み込み、文字列連結 |
 | **ループ・分岐** | 🔄 未対応 | 将来対応予定 |
 
 ## 特徴
@@ -64,7 +64,7 @@ profiles:
     prompt_marker: "$ "
     auth:
       type: password
-      prompt: true
+      password_file: passwords.dat  # パスワードファイルから読み込み
 
   target:
     host: 10.0.0.50
@@ -72,7 +72,7 @@ profiles:
     prompt_marker: "$ "
     auth:
       type: password
-      env: TARGET_PASSWORD
+      password_file: passwords.dat  # パスワードファイルから読み込み
       password_prompt: "password:"  # 2段目以降で必須
 
 routes:
@@ -127,12 +127,17 @@ profiles:
 auth:
   type: password
   # 以下のいずれかを選択:
-  prompt: true              # 実行時にパスワードを入力
-  env: ENV_VAR_NAME        # 環境変数から読み込み
-  value: "password"        # パスワードを直接記述（非推奨）
+  password_file: passwords.dat  # パスワードファイルから読み込み（推奨）
+                                # 省略時のデフォルト: "passwords.dat"
+  value: "password"             # パスワードを直接記述（テスト用、非推奨）
   # 2段目以降のルートステップでは以下が必須:
   password_prompt: "password:"  # パスワード入力待機文字列
 ```
+
+**パスワードファイルの使用方法：**
+- Tera Termの`getpassword`コマンドを使用してパスワードファイルから読み込みます
+- パスワード名はプロファイル名が自動的に使用されます
+- パスワードファイルの作成方法は[Tera Term公式ドキュメント](https://teratermproject.github.io/manual/5/ja/macro/command/getpassword.html)を参照してください
 
 #### 公開鍵認証
 

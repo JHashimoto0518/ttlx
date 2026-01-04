@@ -293,7 +293,7 @@ graph TB
 - `routes` の各ルート内の各ステップで指定された `profile` が `profiles` に存在する
 - 2段目以降のステップに認証が必要な場合、`password_prompt` が設定されている
 - 各プロファイルに `prompt_marker` が設定されている
-- 認証設定が正しい（`password` の場合は `value` | `env` | `prompt` のいずれか）
+- 認証設定が正しい（`password` の場合は `value` | `password_file` のいずれか、相互排他）
 - ホスト名、ポート番号が妥当な形式
 - `commands` が指定されている場合、配列形式である
 

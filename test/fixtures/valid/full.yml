@@ -8,7 +8,7 @@ profiles:
     prompt_marker: "# "
     auth:
       type: password
-      env: BASTION_PASSWORD
+      password_file: passwords.dat
 
   target:
     host: 10.0.0.50

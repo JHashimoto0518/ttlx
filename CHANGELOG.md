@@ -39,10 +39,9 @@ Version 1.0.0 will be the first stable release. Currently in beta (0.1.0-beta).
 - Configuration validation with detailed error messages
 
 #### Authentication
-- Password authentication with multiple input methods:
-  - Runtime password prompt (`prompt: true`)
-  - Environment variable (`env: VAR_NAME`)
-  - Direct password specification (`value: "password"`)
+- Password authentication with secure password file support:
+  - Password file (`password_file: "passwords.dat"`) - uses Tera Term's `getpassword` command
+  - Direct password specification (`value: "password"`) - for testing only
 - Public key authentication support (`keyfile` type)
 
 #### CLI Commands
@@ -72,6 +71,12 @@ Version 1.0.0 will be the first stable release. Currently in beta (0.1.0-beta).
 
 ### Changed
 
+- **BREAKING**: Password authentication now uses password files instead of environment variables or prompts
+  - Removed: `auth.env` field (environment variable authentication)
+  - Removed: `auth.prompt` field (runtime prompt authentication)
+  - Added: `auth.password_file` field (password file authentication using `getpassword` command)
+  - Default: `password_file` defaults to `"passwords.dat"` if not specified
+  - Migration: Replace `env: VAR_NAME` or `prompt: true` with `password_file: "passwords.dat"`
 - **BREAKING**: `route` (singular) field is no longer supported. Use `routes` (plural) with named routes instead
 - **BREAKING**: `-o` / `--output` flag now specifies output **directory** instead of output file path
   - Default: current directory (`.`)
@@ -116,9 +121,10 @@ ttlx/
 - No support for interactive command execution within TTL scripts
 
 ### Security Considerations
-- Passwords in YAML files should use environment variables or runtime prompts
-- Direct password specification (`value:`) is supported but not recommended
-- Generated TTL scripts may contain sensitive information
+- Passwords should be stored in Tera Term password files using the `password_file` field
+- Direct password specification (`value:`) is supported for testing only, not recommended for production
+- Generated TTL scripts use `getpassword` command to securely read passwords from password files
+- Password names are automatically set to profile names for consistency
 - Route name validation prevents path traversal attacks
 
 [Unreleased]: https://github.com/JHashimoto0518/ttlx/compare/v0.1.0-beta...HEAD
