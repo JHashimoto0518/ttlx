@@ -6,7 +6,7 @@
 > This project is under active development. APIs and functionality may change without notice.
 > Not recommended for production use.
 
-[![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)](https://golang.org)
+[![Go Version](https://img.shields.io/badge/go-1.25+-blue.svg)](https://golang.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ttlx is a tool that generates Tera Term macro (TTL) scripts from YAML configuration files.
@@ -227,7 +227,7 @@ See the [test/fixtures/valid](test/fixtures/valid) directory for more examples:
 
 ### Prerequisites
 
-- Go 1.21 or later
+- Go 1.25 or later
 - golangci-lint (for linting)
 
 ### Building

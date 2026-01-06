@@ -31,7 +31,7 @@
 - YAMLパーサー、CLIフレームワークのエコシステムが成熟
 
 #### バージョン
-- **Go 1.21以降** を使用
+- **Go 1.25以降** を使用
 - モジュール管理に Go Modules を使用
 
 ---
@@ -222,7 +222,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.25'
       - name: Lint
         run: golangci-lint run
       - name: Test
