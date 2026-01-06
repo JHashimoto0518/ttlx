@@ -98,15 +98,21 @@ routes:
 ### 2. TTLスクリプトを生成
 
 ```bash
-ttlx build config.yml
+$ ttlx build config.yml
+Generated TTL files:
+  - to-web-server.ttl
+  - to-db-server.ttl
 ```
 
-これにより、Tera Termで実行可能な `config.ttl` が生成されます。
+ルートごとにTTLファイルが生成されます。Tera Termで実行してください。
 
-### 3. 設定ファイルを検証
+### 3. 設定ファイルを検証（オプション）
+
+ビルド前に設定ファイルの構文エラーをチェックできます。
 
 ```bash
-ttlx validate config.yml
+$ ttlx validate config.yml
+✓ Configuration is valid
 ```
 
 ## 設定方法
