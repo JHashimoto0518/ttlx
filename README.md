@@ -6,7 +6,7 @@
 > 本プロジェクトは開発中です。APIや機能は予告なく変更される可能性があります。
 > 本番環境での使用は推奨しません。
 
-[![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)](https://golang.org)
+[![Go Version](https://img.shields.io/badge/go-1.25+-blue.svg)](https://golang.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ttlxは、YAML設定ファイルからTera Termマクロ（TTL）スクリプトを生成するツールです。
@@ -227,7 +227,7 @@ ttlx version
 
 ### 必要要件
 
-- Go 1.21以降
+- Go 1.25以降
 - golangci-lint（リント用）
 
 ### ビルド

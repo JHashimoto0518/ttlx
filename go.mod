@@ -1,6 +1,6 @@
 module github.com/JHashimoto0518/ttlx
 
-go 1.21.13
+go 1.25.5
 
 require (
 	github.com/spf13/cobra v1.10.2
