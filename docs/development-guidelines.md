@@ -810,7 +810,7 @@ import (
 
     // 外部ライブラリ
     "github.com/spf13/cobra"
-    "gopkg.in/yaml.v3"
+    "go.yaml.in/yaml/v3"
 
     // 内部パッケージ
     "github.com/your-org/ttlx/internal/config"
