@@ -20,10 +20,8 @@ By defining connection settings and commands as reusable profiles, it improves m
 | **Authentication** | ✅ Supported | Password auth (password file/direct)<br>Public key authentication |
 | **Command Execution** | ✅ Supported | Execute arbitrary commands after connection |
 | **Error Handling** | ✅ Supported | Timeout handling, connection failure handling |
-| **File Transfer** | 🔄 Not Yet | Planned for future release |
 | **Dialog Display** | ⚠️ Partial | Password prompt and error messages only |
 | **Variable Operations** | ⚠️ Partial | Password file reading, string concatenation |
-| **Loops & Branching** | 🔄 Not Yet | Planned for future release |
 
 ## Features
 
@@ -31,8 +29,6 @@ By defining connection settings and commands as reusable profiles, it improves m
 - 🔐 **Multiple Authentication Methods**: Support for password and public key authentication
 - 🔗 **Multi-hop SSH**: Automate connections through bastion hosts and proxy servers
 - ✅ **Validation**: Built-in configuration validation with helpful error messages
-- 🎯 **Type-safe**: Leverages Go's type system for robust code generation
-- 🧪 **Well-tested**: 97.8% test coverage
 
 ## Installation
 
@@ -60,31 +56,43 @@ version: "1.0"
 profiles:
   bastion:
     host: bastion.example.com
-    user: user1
+    user: admin
     prompt_marker: "$ "
     auth:
       type: password
-      password_file: passwords.dat  # Read from password file
+      password_file: passwords.dat
 
-  target:
-    host: 10.0.0.50
-    user: user2
+  web-server:
+    host: 10.0.0.10
+    user: webadmin
     prompt_marker: "$ "
     auth:
       type: password
-      password_file: passwords.dat  # Read from password file
-      password_prompt: "password:"  # Required for 2nd+ steps
+      password_file: passwords.dat
+      password_prompt: "password:"
 
+  db-server:
+    host: 10.0.0.20
+    user: dbadmin
+    prompt_marker: "$ "
+    auth:
+      type: password
+      password_file: passwords.dat
+      password_prompt: "password:"
+
+# Define multiple routes sharing the bastion profile
 routes:
-  simple-connection:
+  to-web-server:
     - profile: bastion
+    - profile: web-server
       commands:
-        - echo "Connected to bastion"
+        - systemctl status nginx
 
-    - profile: target
+  to-db-server:
+    - profile: bastion
+    - profile: db-server
       commands:
-        - ps aux
-        - df -h
+        - systemctl status postgresql
 ```
 
 ### 2. Generate TTL script

@@ -20,10 +20,8 @@ ttlxは、YAML設定ファイルからTera Termマクロ（TTL）スクリプト
 | **認証** | ✅ 対応 | パスワード認証（パスワードファイル/直接指定）<br>公開鍵認証 |
 | **コマンド実行** | ✅ 対応 | 接続後の任意コマンド実行 |
 | **エラーハンドリング** | ✅ 対応 | タイムアウト処理、接続失敗時の処理 |
-| **ファイル転送** | 🔄 未対応 | 将来対応予定 |
 | **ダイアログ表示** | ⚠️ 部分対応 | パスワード入力、エラーメッセージのみ |
 | **変数操作** | ⚠️ 部分対応 | パスワードファイル読み込み、文字列連結 |
-| **ループ・分岐** | 🔄 未対応 | 将来対応予定 |
 
 ## 特徴
 
@@ -31,8 +29,6 @@ ttlxは、YAML設定ファイルからTera Termマクロ（TTL）スクリプト
 - 🔐 **複数の認証方式**: パスワード認証と公開鍵認証をサポート
 - 🔗 **多段SSH接続**: 踏み台サーバーやプロキシサーバー経由の接続を自動化
 - ✅ **バリデーション**: わかりやすいエラーメッセージ付きの設定検証機能
-- 🎯 **型安全**: Goの型システムを活用した堅牢なコード生成
-- 🧪 **高品質**: テストカバレッジ97.8%
 
 ## インストール
 
@@ -60,31 +56,43 @@ version: "1.0"
 profiles:
   bastion:
     host: bastion.example.com
-    user: user1
+    user: admin
     prompt_marker: "$ "
     auth:
       type: password
-      password_file: passwords.dat  # パスワードファイルから読み込み
+      password_file: passwords.dat
 
-  target:
-    host: 10.0.0.50
-    user: user2
+  web-server:
+    host: 10.0.0.10
+    user: webadmin
     prompt_marker: "$ "
     auth:
       type: password
-      password_file: passwords.dat  # パスワードファイルから読み込み
-      password_prompt: "password:"  # 2段目以降で必須
+      password_file: passwords.dat
+      password_prompt: "password:"
 
+  db-server:
+    host: 10.0.0.20
+    user: dbadmin
+    prompt_marker: "$ "
+    auth:
+      type: password
+      password_file: passwords.dat
+      password_prompt: "password:"
+
+# bastionプロファイルを共用して複数のルートを定義
 routes:
-  simple-connection:
+  to-web-server:
     - profile: bastion
+    - profile: web-server
       commands:
-        - echo "踏み台サーバーに接続しました"
+        - systemctl status nginx
 
-    - profile: target
+  to-db-server:
+    - profile: bastion
+    - profile: db-server
       commands:
-        - ps aux
-        - df -h
+        - systemctl status postgresql
 ```
 
 ### 2. TTLスクリプトを生成
