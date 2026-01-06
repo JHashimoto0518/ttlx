@@ -95,18 +95,24 @@ routes:
         - systemctl status postgresql
 ```
 
-### 2. Generate TTL script
+### 2. Generate TTL scripts
 
 ```bash
-ttlx build config.yml
+$ ttlx build config.yml
+Generated TTL files:
+  - to-web-server.ttl
+  - to-db-server.ttl
 ```
 
-This creates `config.ttl` that you can run in Tera Term.
+A TTL file is generated for each route. Run them in Tera Term.
 
-### 3. Validate configuration
+### 3. Validate configuration (optional)
+
+You can check for syntax errors before building.
 
 ```bash
-ttlx validate config.yml
+$ ttlx validate config.yml
+✓ Configuration is valid
 ```
 
 ## Configuration
