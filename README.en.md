@@ -186,8 +186,14 @@ options:
   retry: 3                 # Number of retries (not implemented yet)
   log: true                # Enable logging (not implemented yet)
   log_file: /tmp/ttlx.log  # Log file path (not implemented yet)
-  auto_disconnect: true    # Auto-disconnect after final step (default: false)
+  auto_disconnect: true    # Auto-disconnect after final step (default: false, experimental)
 ```
+
+> [!WARNING]
+> `auto_disconnect` is an experimental feature with the following limitations:
+> - Only prompts matching `prompt_marker` of each profile can be detected
+> - May not work correctly in environments with custom prompts (e.g., custom PS1 settings)
+> - If `su` changes to a different prompt, that prompt must be included in one of the profile's `prompt_marker`
 
 ## CLI Commands
 

@@ -198,7 +198,7 @@ func TestGenerate_AutoDisconnect(t *testing.T) {
 		autoDisconnect *bool
 		routeSteps     int
 		expectClosett  bool
-		expectExit     int // 期待される exit コマンドの数
+		expectLoop     bool // 期待される do-loop 構造
 		expectEnd      bool
 	}{
 		{
@@ -206,7 +206,7 @@ func TestGenerate_AutoDisconnect(t *testing.T) {
 			autoDisconnect: boolPtr(true),
 			routeSteps:     1,
 			expectClosett:  true,
-			expectExit:     0,
+			expectLoop:     true,
 			expectEnd:      true,
 		},
 		{
@@ -214,7 +214,7 @@ func TestGenerate_AutoDisconnect(t *testing.T) {
 			autoDisconnect: boolPtr(true),
 			routeSteps:     2,
 			expectClosett:  true,
-			expectExit:     1,
+			expectLoop:     true,
 			expectEnd:      true,
 		},
 		{
@@ -222,7 +222,7 @@ func TestGenerate_AutoDisconnect(t *testing.T) {
 			autoDisconnect: boolPtr(false),
 			routeSteps:     2,
 			expectClosett:  false,
-			expectExit:     0,
+			expectLoop:     false,
 			expectEnd:      true,
 		},
 		{
@@ -230,7 +230,7 @@ func TestGenerate_AutoDisconnect(t *testing.T) {
 			autoDisconnect: nil,
 			routeSteps:     2,
 			expectClosett:  false,
-			expectExit:     0,
+			expectLoop:     false,
 			expectEnd:      true,
 		},
 	}
@@ -246,7 +246,7 @@ func TestGenerate_AutoDisconnect(t *testing.T) {
 
 			result := results["test-route"]
 
-				// closett の存在チェック（成功終了部分のみ）
+			// closett の存在チェック（成功終了部分のみ）
 			// SUCCESS セクションを抽出
 			successIndex := strings.Index(result, ":SUCCESS")
 			errorIndex := strings.Index(result, ":ERROR")
@@ -261,9 +261,18 @@ func TestGenerate_AutoDisconnect(t *testing.T) {
 				assert.NotContains(t, successSection, "closett", "unexpected 'closett' in SUCCESS section")
 			}
 
-			// exit コマンドの数チェック
-			exitCount := strings.Count(result, "sendln 'exit'")
-			assert.Equal(t, tt.expectExit, exitCount, "expected %d 'exit' commands, got %d", tt.expectExit, exitCount)
+			// do-loop 構造のチェック（ループベースの auto disconnect）
+			if tt.expectLoop {
+				assert.Contains(t, result, "do\n", "expected 'do' in generated TTL")
+				assert.Contains(t, result, "loop while result > 0", "expected 'loop while result > 0' in generated TTL")
+				assert.Contains(t, result, "sendln 'exit'", "expected 'sendln exit' in generated TTL")
+				assert.Contains(t, result, "flushrecv", "expected 'flushrecv' in generated TTL")
+				// wait コマンドに prompt_marker が含まれることを確認
+				assert.Contains(t, result, "wait '$ '", "expected wait command with prompt marker")
+			} else {
+				assert.NotContains(t, result, "do\n", "unexpected 'do' in generated TTL")
+				assert.NotContains(t, result, "loop while result > 0", "unexpected loop in generated TTL")
+			}
 
 			// end の存在チェック
 			if tt.expectEnd {
