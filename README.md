@@ -186,8 +186,14 @@ options:
   retry: 3                 # リトライ回数（未実装）
   log: true                # ログ有効化（未実装）
   log_file: /tmp/ttlx.log  # ログファイルパス（未実装）
-  auto_disconnect: true    # 最終ステップ完了後に自動切断、デフォルト: false
+  auto_disconnect: true    # 最終ステップ完了後に自動切断、デフォルト: false（実験的機能）
 ```
+
+> [!WARNING]
+> `auto_disconnect`は実験的機能です。以下の制限事項があります：
+> - 各プロファイルの`prompt_marker`に一致するプロンプトのみ検出可能
+> - カスタムプロンプト（独自のPS1設定など）を使用する環境では正しく動作しない可能性があります
+> - `su`で異なるプロンプトに変わる場合、そのプロンプトがいずれかのプロファイルの`prompt_marker`に含まれている必要があります
 
 ## CLIコマンド
 

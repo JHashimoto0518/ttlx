@@ -21,10 +21,11 @@ Version 1.0.0 will be the first stable release. Currently in beta (0.1.0-beta).
   - Profile reuse across multiple routes
   - Route name validation (alphanumeric, hyphens, underscores only)
 
-#### Auto-Disconnect Option
+#### Auto-Disconnect Option (Experimental)
 - `auto_disconnect` option in global options for connection control
   - `true`: Automatically disconnect all connections and close Tera Term on success
   - `false` (default): Keep connections alive after script execution
+  - **Note**: This is an experimental feature. See README for limitations.
 
 #### Password Prompt Field
 - `password_prompt` field for password authentication in multi-hop scenarios

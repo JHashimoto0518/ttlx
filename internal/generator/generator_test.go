@@ -267,6 +267,8 @@ func TestGenerate_AutoDisconnect(t *testing.T) {
 				assert.Contains(t, result, "loop while result > 0", "expected 'loop while result > 0' in generated TTL")
 				assert.Contains(t, result, "sendln 'exit'", "expected 'sendln exit' in generated TTL")
 				assert.Contains(t, result, "flushrecv", "expected 'flushrecv' in generated TTL")
+				// wait コマンドに prompt_marker が含まれることを確認
+				assert.Contains(t, result, "wait '$ '", "expected wait command with prompt marker")
 			} else {
 				assert.NotContains(t, result, "do\n", "unexpected 'do' in generated TTL")
 				assert.NotContains(t, result, "loop while result > 0", "unexpected loop in generated TTL")
