@@ -91,6 +91,9 @@ Version 1.0.0 will be the first stable release. Currently in beta (0.1.0-beta).
 - Remove colon prefix from goto labels (`goto LABEL`, not `goto :LABEL`) (#8)
 - Remove invalid timeout argument from wait command (#8)
 - Add port option to SSH command (`ssh user@host -p port`) (#8)
+- Fix auto_disconnect to handle shell sessions (su, bash, etc.) using loop-based exit
+  - Previously only counted SSH hops, now loops until connection is closed
+  - Uses `do-loop while result > 0` pattern for reliable disconnection
 
 ### Technical Details
 

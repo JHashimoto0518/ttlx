@@ -81,8 +81,8 @@ func generateRoute(cfg *config.Config, routeName string, route []*config.RouteSt
 	}
 
 	if autoDisconnect {
-		// 自動切断: 多段接続を順次exit、最後にclosett
-		sb.WriteString(generateAutoDisconnect(len(route)))
+		// 自動切断: ループで全セッションをexit、最後にclosett
+		sb.WriteString(generateAutoDisconnect())
 	} else {
 		// 接続保持: セッションを維持したまま終了
 		sb.WriteString(successKeepAliveTemplate)
@@ -212,21 +212,19 @@ func generateErrorHandling(errorLabels []string, route []*config.RouteStep) stri
 	return sb.String()
 }
 
-// generateAutoDisconnect generates disconnect sequence for all route steps.
-func generateAutoDisconnect(routeSteps int) string {
+// generateAutoDisconnect generates disconnect sequence using loop-based approach.
+// This handles all cases including multi-hop SSH and shell sessions (su, bash, etc.).
+func generateAutoDisconnect() string {
 	var sb strings.Builder
 
 	sb.WriteString("; === Auto Disconnect ===\n")
-
-	// 多段接続の場合、すべての接続を順次exit
-	if routeSteps > 1 {
-		for i := routeSteps - 1; i > 0; i-- {
-			sb.WriteString(fmt.Sprintf("; Disconnect from step %d\n", i+1))
-			sb.WriteString("sendln 'exit'\n")
-			sb.WriteString("pause 1\n") // 切断処理の完了を待つ
-		}
-		sb.WriteString("\n")
-	}
+	sb.WriteString("; Loop until connection is closed (handles multi-hop SSH and shell sessions)\n")
+	sb.WriteString("do\n")
+	sb.WriteString("    flushrecv\n")
+	sb.WriteString("    sendln 'exit'\n")
+	sb.WriteString("    wait '%' '$' '#'\n")
+	sb.WriteString("loop while result > 0\n")
+	sb.WriteString("\n")
 
 	// 成功終了（Tera Term終了）
 	sb.WriteString(successTemplate)
